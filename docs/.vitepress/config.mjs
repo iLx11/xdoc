@@ -6,7 +6,6 @@ export default defineConfig({
   title: 'iLx1',
   description: 'note and article',
   srcDir: './src',
-  outDir: '../public',
   assetsDir: 'static',
   base: '/xdoc/',
   themeConfig: {
