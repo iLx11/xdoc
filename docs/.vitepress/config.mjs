@@ -9,6 +9,10 @@ export default defineConfig({
   assetsDir: 'static',
   base: '/xdoc/',
   themeConfig: {
+    outline: {
+      level: [2, 4],
+      label: '标题索引'
+    },
     nav: [
       { text: 'Home', link: '/' },
       { text: '前端', link: '/fontend/' },

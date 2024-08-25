@@ -1,9 +1,9 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
+# https://vitepress.  /reference/default-theme-home-page
 layout: home
 
 hero:
-  name: "iLx1"
+  name: "xdoc"
   text: "note & article"
   tagline: 笔记 & 文章
   actions:
@@ -33,6 +33,7 @@ features:
 ---
 
 ```js
-console.info('welcome, friend')
+console.info('欢迎，朋友🎉')
+console.info('welcome, friend🎉')
 ```
 
