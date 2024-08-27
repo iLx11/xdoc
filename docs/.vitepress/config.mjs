@@ -55,6 +55,11 @@ export default defineConfig({
       ],
       '/other/': [
         {
+          text: '文章',
+          collapsed: false,
+          items: sidebarPathGen('/other/article/'),
+        },
+        {
           text: '笔记',
           collapsed: false,
           items: sidebarPathGen('/other/note/'),

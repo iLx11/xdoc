@@ -1,6 +1,6 @@
 ---
 title: TS笔记
-date: 2023-02-16 10:00:54
+date: 20230216 10:00:54
 tags:
 categories:
 classes: 笔记
@@ -10,7 +10,7 @@ classes: 笔记
 
 TypeScript是一种由微软开发的开源、跨平台的编程语言。它是JavaScript的超集，最终会被编译为JavaScript代码。
 
--
+
 
 ## TypeScript 的特点
 
@@ -28,14 +28,14 @@ TypeScript 可以编译出纯净、 简洁的 JavaScript 代码，并且可以�
 
 TypeScript 提供最新的和不断发展的 JavaScript 特性，包括那些来自 2015 年的 ECMAScript 和未来的提案中的特性，比如异步功能和 Decorators，以帮助建立健壮的组件。
 
--
+
 
 # 安装 TypeScript
 
 命令行运行如下命令，全局安装 TypeScript：
 
 ```bash
-npm install -g typescript
+npm install g typescript
 //
 yarn global add typescript
 ```
@@ -43,10 +43,10 @@ yarn global add typescript
 安装完成后，在控制台运行如下命令，检查安装是否成功(3.x)：
 
 ```bash
-tsc -V 
+tsc V 
 ```
 
--
+
 
 ### 运行TS
 
@@ -64,27 +64,27 @@ tsc helloworld.ts
 node helloworld.js
 ```
 
--
+
 
 ### vscode自动编译
 
 ```
 1). 生成配置文件tsconfig.json
-    tsc --init
+    tsc init
 2). 修改tsconfig.json配置
     "outDir": "./js",
     "strict": false,    
 3). 启动监视任务: 
-    终端 -> 运行任务 -> 监视tsconfig.json
+    终端 > 运行任务 > 监视tsconfig.json
 ```
 
--
 
--
+
+
 
 # TS基础语法
 
--
+
 
 ## 一、类型注解
 
@@ -127,7 +127,7 @@ tArray = ["str", 123];
 tArray = [123, "str"];
 ```
 
--
+
 
 ### 枚举
 
@@ -144,7 +144,7 @@ enum Colorful {
 let meColor: Colorful = Colorful.blue;
 ```
 
--
+
 
 ### any
 
@@ -159,13 +159,13 @@ notdecide = true;  // ok
 let array: any[] = ['123', 123, true];
 ```
 
--
+
 
 ### void
 
 某种程度上来说，`void` 类型像是与 `any` 类型相反，它`表示没有任何类型`。 当一个函数没有返回值时，你通常会见到其返回值类型是 `void`：
 
--
+
 
 ### object
 
@@ -173,7 +173,7 @@ let array: any[] = ['123', 123, true];
 
 使用 `object` 类型，就可以更好的表示像 `Object.create` 这样的 `API`
 
--
+
 
 ### 联合类型
 
@@ -187,7 +187,7 @@ function func(x: number | string ): string {
 }
 ```
 
--
+
 
 ### 类型断言
 
@@ -232,15 +232,15 @@ b10 = 123
 b10 = 'abc'
 ```
 
--
 
--
+
+
 
 ## 接口
 
 TypeScript 的核心原则之一是对值所具有的结构进行类型检查。我们使用接口（Interfaces）来定义对象的类型。`接口是对象的状态(属性)和行为(方法)的抽象(描述)`
 
--
+
 
 创建对象，对属性进行约束
 
@@ -262,7 +262,7 @@ let person: Person {
 }
 ```
 
--
+
 
 ### 函数类型
 
@@ -280,11 +280,11 @@ interface SearchFunc {
 
 ```ts
 const mySearch: SearchFunc = function (source: string, sub: string): boolean {
-  return source.search(sub) > -1
+  return source.search(sub) > 1
 }
 ```
 
--
+
 
 ### 类类型
 
@@ -310,7 +310,7 @@ class Clock implements Alarm, Light {
 }
 ```
 
--
+
 
 ### 接口继承接口
 
@@ -318,23 +318,23 @@ class Clock implements Alarm, Light {
 interface lightAlarm extends Alarm, Ligth {}
 ```
 
--
+
 
 ## 类
 
 ### 公共，私有与受保护的修饰符
 
-### [#](https://24kcs.github.io/vue3_study/chapter2/3_class.html#默认为-public)默认为 public
+### [#](https://24kcs.github.io/vue3_study/chapter2/3_class.html#默认为public)默认为 public
 
 在上面的例子里，我们可以自由的访问程序里定义的成员。 如果你对其它语言中的类比较了解，就会注意到我们在之前的代码里并没有使用 `public` 来做修饰；例如，C# 要求必须明确地使用 `public` 指定成员是可见的。 在 TypeScript 里，成员都默认为 `public`。
 
 你也可以明确的将一个成员标记成 `public`。 我们可以用下面的方式来重写上面的 `Animal` 类：
 
-### [#](https://24kcs.github.io/vue3_study/chapter2/3_class.html#理解-private)理解 private
+### [#](https://24kcs.github.io/vue3_study/chapter2/3_class.html#理解private)理解 private
 
 当成员被标记成 `private` 时，它就不能在声明它的类的外部访问。
 
-### [#](https://24kcs.github.io/vue3_study/chapter2/3_class.html#理解-protected)理解 protected
+### [#](https://24kcs.github.io/vue3_study/chapter2/3_class.html#理解protected)理解 protected
 
 `protected` 修饰符与 `private` 修饰符的行为很相似，但有一点不同，`protected`成员在派生类中仍然可以访问。
 
@@ -365,7 +365,7 @@ class Person extends Animal {
 }
 ```
 
--
+
 
 ### readonly 修饰符
 
@@ -381,7 +381,7 @@ class Person {
 }
 ```
 
--
+
 
 ### 存取器
 
@@ -392,10 +392,10 @@ class Person {
   firstName: string = 'A'
   lastName: string = 'B'
   get fullName () {
-    return this.firstName + '-' + this.lastName
+    return this.firstName + '' + this.lastName
   }
   set fullName (value) {
-    const names = value.split('-')
+    const names = value.split('')
     this.firstName = names[0]
     this.lastName = names[1]
   }
@@ -404,7 +404,7 @@ const p = new Person()
 console.log(p.fullName)
 ```
 
--
+
 
 ### 静态属性
 
@@ -422,7 +422,7 @@ class Person {
 console.log( Person.personalId )
 ```
 
--
+
 
 ###  抽象类
 
@@ -432,7 +432,7 @@ console.log( Person.personalId )
 
 ## 函数
 
--
+
 
 ### 可选参数和默认参数
 
@@ -451,7 +451,7 @@ function getName(firstName: string='L', lastName?: string): string {}
 function info(x: string, ...args: string[]): string {}
 ```
 
--
+
 
 ### 函数重载
 
@@ -473,15 +473,15 @@ function add(x: string | number, y: string | number): string | number {
 }
 ```
 
--
 
--
+
+
 
 # 泛型
 
 指在定义函数、接口或类的时候，不预先指定具体的类型，而在使用的时候再指定具体类型的一种特性
 
--
+
 
 
 

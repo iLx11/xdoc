@@ -729,9 +729,11 @@ const {dialog, app} = require("electron").remote
 let filePath = await  dialog.showOpenDialog({
 	title: "选择一个文件",
     buttonLabel: "打开文件",
+    // 默认打开路径
     defaultPath: app.getPath('pictures'),
-    // 多选文件
+    // 多选文件 可以是 'openFile', 'openDirectory', 'multiSelections'
     properties: "multiSelections",
+    // 限制文件类型
     filters: [
         // 文件类型
         {name: "图片", extensions: ["jpg", "png", "gif"]},
@@ -740,6 +742,29 @@ let filePath = await  dialog.showOpenDialog({
 })
 // 拿到文件路径可以进行读写操作
 ```
+
+### 保存文件
+
+```js
+// 保存文件
+const saveConfigFile = async () => {
+  const savePath = await dialog.showSaveDialog({
+    title: '保存文件',
+    defaultPath: 'config.json', // 默认文件名
+    buttonLabel: '保存',
+    filters: [
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
+  })
+  // 如果没有取消
+  if(!savePath.canceled) {
+    console.info(savePath.filePath)
+  }
+}
+```
+
+
 
 ## 菜单
 
