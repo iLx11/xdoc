@@ -20,6 +20,6 @@
 核心规范补充指定了 GATT 服务器必须在广播包插入有效负载的字段，以使特定服务的数据可供扫描设备使用。
 > The contents of the Service Data field can correspond to the complete or partial value of a particular characteristic or descriptor within the corresponding service. It is up to each profile specification to define which, because only the profile has sufficient knowl‐ edge about the data to decide which pieces of information are the most relevant to be broadcasted
 
-![[Pasted image 20240530170714.png]]
+![Pasted image 20240530170714.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240530170714.png)
 服务数据字段的内容可以对应于相应服务中特定特征或描述符的完整或部分值，每个配置文件规范都应自行定义哪些内容。因为只有配置文件对数据有足够的了解，才能决定哪些信息最相关，最值得广播
 

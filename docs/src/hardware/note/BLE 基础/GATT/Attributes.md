@@ -78,13 +78,14 @@ ATT 和 GATT 定义了下面的权限
 > The attribute value holds the actual data content of the attribute. There are no restric‐ tions on the type of data it can contain (you can imagine it as a non-typed buffer that can be cast to whatever the actual type is, based on the attribute type), although its maximum length is limited to 512 bytes by the specification.
 
 属性值保存属性的实际数据内容。它可以包含的数据类型没有限制（可以将其想象为一个非类型化缓冲区，可以根据属性类型将其转换为任何实际类型），尽管其最大长度限制为 512 字节。
-![[Pasted image 20240522173643.png]]
+![Pasted image 20240522173643.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240522173643.png)
 
 > Athough the Bluetooth specification defines attributes in the ATT section, that is as far as ATT goes when it comes to them. ATT operates in attribute terms and relies on all the concepts exposed in “Attributes” on page 53 to provide a series of precise protocol data units (PDUs, commonly known as packets) that permit a client to access the at‐ tributes on a server. GATT goes further to establish a strict hierarchy to organize attributes in a reusable and practical manner, allowing the access and retrieval of information between client and server to follow a concise set of rules that together consitute the framework used by all GATT-based profiles.
 
 尽管蓝牙规范在 ATT 部分中定义了属性，但这只是 ATT 涉及到的属性。 ATT 以属性术语运行，并依赖“属性”中的概念来提供一系列精确的协议数据单元（PDU，通常称为数据包），允许客户端访问服务器上的属性。 
 GATT 进一步建立了严格的层次结构，以可重用且实用的方式组织属性，允许客户端和服务器之间的信息访问和检索遵循一组简洁的规则，这些规则共同构成了所有基于 GATT 的配置文件所使用的框架。
-![[Pasted image 20240522174539.png]]
+![Pasted image 20240522174539.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240522174539.png)
+
 > The attributes in a GATT server are grouped into services, each of which can contain zero or more characteristics. These characteristics, in turn, can include zero or more descriptors. This hierarchy is strictly enforced for any device claiming GATT compati‐ bility (essentially, all BLE devices sold), which means that all attributes in a GATT server are included in one of these three categories, with no exceptions. No dangling attributes can live outside of this hierarchy, as exchanging data between BLE devices depends on it
 
 **GATT 服务器中的属性被分组为服务，每个服务可以包含零个或多个特征。这些特征又可以包括零个或多个描述符**。对于任何声称 GATT 兼容性的设备（本质上是所有出售的 BLE 设备）都严格执行此层次结构，这意味着 GATT 服务器中的所有属性都包含在这三个类别之一中，无一例外。任何悬空属性都不能存在于该层次结构之外，因为 BLE 设备之间的数据交换取决于它

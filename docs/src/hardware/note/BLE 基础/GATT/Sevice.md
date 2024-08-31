@@ -3,10 +3,11 @@
 
 GATT 服务将概念上相关的属性，分组到 GATT 服务器中属性信息集的一个公共部分中。该规范将单个服务中的所有属性称为服务定义。
 **因此，GATT 服务器的属性实际上是一系列服务定义，每个定义都以单个属性开头，该属性标记服务的开始（称为服务声明）。该属性的类型和值格式在 GATT 中严格指定**\
-![[Pasted image 20240524094721.png]]
+![Pasted image 20240524094721.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240524094721.png)
 句柄类似于用于寻址属性的行号。服务声明属性的 Type 字段包含 UUID （ `0x2800` ），是一个唯一的 SIG 定义的 UUID，仅用于指示服务的开始。
 “权限”字段表示“只读”，无需身份验证。“值”字段保存所声明服务的 UUID。
-从概念上可以将 GATT 服务视为面向对象语言中的类，并完成实例化，因为服务可以在单个 GATT 服务器中多次实例化（但大多数服务都类似于单例）。
+从概念上可以将 GATT 服务视为面向对象语言中的类，并完成实例化，因为服务可以在单个 GATT 服务器中多次实例化（但大多数服务都类似于单例)。
+
 > Inside a service definition (that is to say, inside a service), you can add one or more references to another services, using include definitions. Include definitions consist of a single attribute (the include declaration) that contains all the details required for the client to reference the included service. 
 > Included services can help avoid duplicating data in a GATT server. If a service will be referenced by other services, you can use this mechanism to save memory and simplify the layout of the GATT server. In the previous analogy with classes and objects, you could see include definitions as pointers or references to an existing object instance.
 
@@ -19,12 +20,13 @@ GATT 服务将概念上相关的属性，分组到 GATT 服务器中属性信息
 **可以将特征理解为用户数据的容器。它们始终包含至少两个属性：特征声明（提供有关实际用户数据的元数据）和特征值（这是在其值字段中包含用户数据的完整属性）**。此外，特征值后面可以跟描述符，进一步扩展特征声明中包含的元数据。
 声明、值和任何描述符一起形成特征定义，它是构成单个特征的属性包。
 ### Characteristic declaration attribute
-![[Pasted image 20240524100551.png]]
-特征声明属性的 Type 字段包含仅用于声明特征的 UUID （ `0x2803` ）。声明属性具有只读权限，确保客户端可以读取值，但不能写入该值。
+![Pasted image 20240524100551.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240524100551.png)
+特征声明属性的 Type 字段包含仅用于声明特征的 UUID （ `0x2803` )。声明属性具有只读权限，确保客户端可以读取值，但不能写入该值。
 “值”字段包含有关所声明特征的重要信息，特别是三个单独的字段：
+
 - **Characteristic properties**:
 	特征属性：允许在此特征上执行哪些类型的 GATT 操作。
-![[Pasted image 20240524101345.png]]
+	![Pasted image 20240524101345.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240524101345.png)
 - **Characteristic value handle**:
 	特征值句柄：包含用户数据（值）的属性的句柄（地址），即特征值属性。
 - **Characteristic UUID**:
@@ -37,8 +39,9 @@ GATT 服务将概念上相关的属性，分组到 GATT 服务器中属性信息
 
 GATT 特征描述符（通常简称为描述符）主要用于向客户端提供元数据（有关特征及其值的附加信息）。它们始终放置在特征定义内、特征值属性之后。
 描述符始终由单个属性（特征描述符声明）组成，其 UUID 始终是描述符类型，其值包含该特定描述符类型定义的任何内容。
-![[Pasted image 20240524114734.png]]**它们通常分为两类，GATT 定义的和自定义的**。
+ ![Pasted image 20240524114734.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240524114734.png)**它们通常分为两类，GATT 定义的和自定义的**。
 以下是 GATT 定义的一些最常用的描述符
+
 > **Extended Properties Descriptor** 
 > This descriptor, when present, simply contains the two additional property bits
 > **Characteristic User Description Descriptor**
@@ -57,4 +60,4 @@ GATT 特征描述符（通常简称为描述符）主要用于向客户端提供
 客户端特征配置描述符 （CCCD） 是一种特定类型的特征描述符，当特征支持服务器启动的操作（即通知和指示）时，它是必需的。**是一个可写描述符，允许 GATT 客户端启用和禁用该特征的通知或指示。GATT客户端可以通过在CCCD中启用该特定特征的指示或通知来订阅它希望接收更新的特征。**
 CCCD 属性的格式如下图所示。CCCD 的 UUID 是 `0x2902` 。CCCD 必须始终是可读和可写的。类型为 CCCD 的描述符的 Value 字段中只有 2 位。
 第一位表示是否启用通知，第二位表示指示。
-![[Pasted image 20240524182217.png]]
+![Pasted image 20240524182217.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240524182217.png)

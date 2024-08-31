@@ -151,17 +151,20 @@ nRF52832 包含了 5个定时器模块：
 ### 时钟源
 定时器工作在高频时钟源（HFLCK）下，包含了一个 4bit （1/2X）的分频器（Prescaler）。52832的有2种时钟输入模式，1MHz模式 和 16MHz模式。 时钟源通过分频器分频后输出最后的频率 f TIMER ,系统会通过这个参数自动选择时钟源，而不需要工程师设置寄存器。 当f TIMER > 1MHZ,系统自动选择16M时钟源，当F TIMER <= 1MHZ，系统选择1M时钟源。
 ### 分频器
-![[Pasted image 20240429140342.png]]
+![分频器](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240429140342.png)
 Prescaler 位 1bit 的分频器，其值为 0 ~ 15。当 Prescaler > 9时，其计算任然为 9
+
 ### MODE
 MODE： 1 选择计数器模式  
 MODE： 2 选择低功耗计数器模式  
 定时器模式下，每一个时钟频率下，计数器自动加1；  
 技术模式下，每触发一次寄存器COUNT event，定时器内部计数器肌醇器就会加1。
+
 ### 比较/捕获功能
 设定CC[n]寄存器的值，可以设置定时的时间。  
 当定时时间的值和CC[n]寄存器的值相等时，将触发一个 COMPARE[n] event。 COMPARE[n] event可以触发中断。
 **如果是周期性的触发，则需要在触发后清除计数值，否则会一直计数，直到溢出。**
+
 #### 计数器模式下：
 每次触发 COUNT 任务时，TIMER 的内部计数器 Counter 寄存器都会递增 1 ，
 **计数器模式下是不使用定时器的频率 和 预分频器，COUNT 任务在定时器模式下无效。**
@@ -173,6 +176,7 @@ within one clock cycle of the PCLK16M.
 
 If the START task and the STOP task are triggered at the same time, that is, within the same period of
 PCLK16M, the STOP task will be prioritized.
+
 ### 定时器定时
 #### 定时器定时的使用（寄存器版本）：
 ```C

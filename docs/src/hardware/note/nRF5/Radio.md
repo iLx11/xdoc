@@ -2,9 +2,10 @@
 接收与发送的包配置需要相同，length 需要按所发的字节调整
 **无线数据包包含以下字段：前导码(PREAMBLE)、地址(ADDRESS)、S0、长度(LENGTH)、S1、有效载荷(PAYLOAD)和CRC。**
 Radio数据包的内容如第307页的“On air packet layout（空中包结构）”所示。Radio数据包中的不同字段按如下顺序从左到右发送：
-![[Pasted image 20240429092208.png]]
+![Pasted image 20240429092208.png](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240429092208.png)
 图中未显示静态有效负载附加项（其长度在**STATLEN**中定义，在标准BLE数据包中为0字节长）。静态有效负载附加项在有效负载和CRC字段之间发送。无线电设备按照上面所示的顺序从左到右发送数据包中的不同字段。前导码将以最低有效位优先(LSB)在空中发送。
 前导码以最低有效位优先在空中发送。**前导码的大小取决于MODE寄存器中选择的模式：**
+
 - 对于**MODE**=Ble_ 1Mbit以及所有Nordic专用操作模式（**MODE**=Nrf_1Mbit和**MODE**=Nrf_2Mbit），前置码为一个字节，**PCNF0**寄存器中的**PLEN**字段必须相应的设置。如果地址的第一位为0，则前导码将设置为0xAA，否则前导码会设置为0x55。
 - 对于**MODE**=Ble_2Mbit，必须通过**PCNF0**寄存器中的**PLEN**字段将前导码设置为2字节长。如果地址的第一位为0，则前导码将设置为0xAAAA，否则前导码会设置为0x5555。
 - 对于**MODE**=Ble_LR125Kbit和**MODE**=Ble_LR500Kbit，前导码是0x3C重复10次。
@@ -28,6 +29,7 @@ CRC多项式是可配置的，如第309页上n位CRC的CRC生成所示，其中*
 CRC是通过CRC生成器串行馈送数据包来计算的。在通过CRC生成器对数据包计时之前，CRC生成器的锁存器b0到bn将用**CRCINIT**寄存器中指定的预定义值初始化。当通过CRC生成器对整个数据包计时时，锁存器b0到bn将保存生成的CRC。Radio在传输和接收期间都将使用该值，但CPU在任何时候都无法读取该值。然而，**无论接收到的CRC是否通过校验，CPU都可以通过RXCRC寄存器读取接收到的CRC。**
 **在接收到包括CRC的整个数据包后，如果未检测到CRC错误，则Radio将生成CRCOK事件，或者如果检测到CRC错误，则生成CRCERROR事件。**
 **在接收到数据包后，可以从CRCSTATUS寄存器读取CRC校验的状态。**
+
 ### Radio状态
 任务**TASK**和事件**EVENT**用于控制Radio的工作状态。
 Radio可以输入下表所述的状态。
@@ -43,15 +45,17 @@ Radio可以输入下表所述的状态。
 | TX        | Radio正在传输数据包                 |
 | RXDISABLE | Radio正在关闭接收                  |
 | TXDISABLE | Radio正在关闭发送                  |
-![[Pasted image 20240428181101.png]]
+
+![](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240428181101.png)
 
 **连续接收**:
 RXEN->RXRU->READY事件->START任务->ADDRESS事件->PAYLOAD事件->END事件->DELAY->START任务->ADDRESS事件->PAYLOAD事件->END事件->DISABLE任务->DISBALED事件，
+
 ### 接收信号强度指示器
 Radio实现了一种测量接收信号功率的机制。该功能被称为接收信号强度指示器（received signal strength indicator-RSSI）。
-RSSI被连续测量并使用单极IIR滤波器对其值进行滤波。在信号电平变化后，RSSI将在大约![](https://img-blog.csdnimg.cn/e28619276ade45b0baec89d0c7652765.png) 后稳定下来。
+RSSI被连续测量并使用单极IIR滤波器对其值进行滤波。在信号电平变化后，RSSI将在大约  `RSSI settle`   后稳定下来。
 通过使用**RSSISTART**任务开始接收信号强度的采样。可以从**RSSISAMPLE**寄存器读取采样。
-RSSI的采样周期由![](https://img-blog.csdnimg.cn/7c37fb95b85d4f7ebd09b8660556c5fa.png) 定义。**RSSISAMPLE**将在该采样周期之后保持滤波后的接收信号强度。
+RSSI的采样周期由  `RSSI`   定义。**RSSISAMPLE**将在该采样周期之后保持滤波后的接收信号强度。
 
 为了使RSSI采样有效，必须在接收模式（**RXEN**任务）下启用Radio，并且必须开始接收（**READY**事件后的**START**任务）。
 ### RADIO 初始化

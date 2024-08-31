@@ -10,13 +10,20 @@ nRF_Drivers --> RTC_ENABLED --> RTC(0)_ENABLED
 nRF52832 的 RTC— Real-time counter 是实时计数器。 注意不要和单片机上的实时时钟搞混淆。
 单片机上的RTC— Real-time Clock，是提供精确的实时时间或者为电子系统提供精确的时间基准。
 nRF52832 的 RTC— Real-time counter 是在低频时钟源 LFCLK 上提供的一个通用的低功耗定时器。
+
 - 使用 RTC 必须 启动 LFCLK时钟；
+
 - nRF52xx 有 RTC0、RTC1、RTC2 三个RTC 模块；
+
 - TICK 事件（滴答事件）常用于低功耗，无滴答RTOS，可在关闭CPU的时候保持RTOS的调度；
+
 - 24位 COUNTER 的分辨率为 30.517us；
+
 - PRESCALER 寄存器在 RTC 停止时可读可写。在启动以后写无效。 PRESCALER 在 START、 CLEAR 和 TRIGOVRFLW 任务发生时都会重新启动。 **fRTC [kHz] = 32.768 / (PRESCALER + 1 )** 分频值 被锁在这些任务内部寄存器 PRESC 中
+
 - 溢出事件： 在模块输入端通过 TRIGOVRFLW task 将COUNTER 计数器的值设置为 0xFFFFF0。计数器计数16次， 到 0xFFFFFF，然后溢出到0时就发生 OVRFLW 事件。Important: The OVRFLW event is disabled by default.
-![[Pasted image 20240428094806.png]]
+
+  ![Pasted image 20240428094806](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240428094806.png)
 ## 配置与初始化
 ### COMPARE EVENT 、TICK EVENT
 ##### 寄存器版本

@@ -29,13 +29,13 @@
 	生成和交换永久安全密钥后的一系列配对，这些密钥将存储在非易失性存储器中，从而在两台设备之间建立永久连接，使其能够在后续连接中快速建立安全链接，而无需再次执行绑定程序。
 - **加密重建**
 	绑定过程完成后，密钥可能已存储在连接的两侧。如果已存储加密密钥，则此程序将定义如何在后续连接中使用这些密钥，来重新建立安全的加密连接，而无需再次执行配对（或绑定）过程。
-因此，配对可以创建一个安全链接，该链接只在连接期间有效。
-而绑定实际上是以共享安全密钥的形式创建永久关联
+	因此，配对可以创建一个安全链接，该链接只在连接期间有效。
+	而绑定实际上是以共享安全密钥的形式创建永久关联
 > Initially (Phase 1), all information required to generate the temporary key is exchanged between the two devices. Next, (Phase 2) the actual temporary encryption key (Short Term Key or STK) is generated on both sides independently and then used to encrypt the connection. Once the connection is secured by encryption, and only if performing bonding, the permanent keys can be distributed for storage and reuse at a later time.
 
 最初（阶段 1），两台设备交换生成临时密钥所需的所有信息。
 接下来，（第 2 阶段）生成实际的临时加密密钥（短期密钥或 STK）由双方独立生成，然后用于加密连接。一旦通过加密确保了连接的安全，并且只有在执行绑定时，永久密钥才可分发存储并在以后重复使用。
-![[Pasted image 20240522100134.png]]
+![阶段](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240522100134.png)
 ## Pairing Algorithms
 配对算法
 > A pairing procedure involves an exchange of Security Manager Protocol (SMP) packets to generate a temporary encryption key called Short Term Key (STK) on both sides. The last step of a pairing procedure (regardless of whether it will then continue into a security key exchange and therefore a bonding procedure) is to encrypt the link with the previ‐ ously generated STK. During the packet exchange, the two peers negotiate one of the following STK generation methods:

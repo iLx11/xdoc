@@ -4,7 +4,8 @@
 要建立连接，主设备首先开始扫描以查找当前正在接受连接请求的广告设备。广告数据包可以通过蓝牙地址进行过滤，也可以基于广告数据本身进行过滤。当检测到合适的广告从设备时，主设备会向从设备发送连接请求数据包，如果从设备响应，则建立连接。
 连接请求数据包包括跳频增量，它决定了主设备和从设备在连接生命周期内将遵循的跳频序列。
 **连接只是在预定的时间从设备和主设备之间的一系列数据交换。每次数据交换称为一个连接事件。**
-![[Pasted image 20240521113715.png]]
+![connection](https://picr.oss-cn-qingdao.aliyuncs.com/img/Pasted%20image%2020240521113715.png)
+
 > The following three connection parameters are another set of key variables communi‐ cated by the master during the establishment of a connection
 > **Connection interval**
 > 	The time between the beginning of two consecutive connection events. This value ranges from 7.5 ms (high throughput) to 4 s (lowest possible throughput but also least power hungry).
