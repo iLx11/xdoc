@@ -16,8 +16,6 @@
 
 #### 右键项目文件夹 选择发行 -> 
 
-![image-20221213191653152](D:\Users\Administrator\Desktop\apk打包\img\image-20221213191653152.png)
-
 #### 原生App打包
 
 ![image-20221024130500963](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024130500963.png)
