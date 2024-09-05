@@ -6,11 +6,11 @@
 
 ### 新建项目
 
-![](https://gitee.com/iLx1/resource-img/raw/master/image-20221024124001763.png)
+![](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024124001763.png)
 
 #### 选择H5 APP
 
-![image-20221024130243171](https://gitee.com/iLx1/resource-img/raw/master/image-20221024130243171.png)
+![image-20221024130243171](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024130243171.png)
 
 #### 将自己的web项目文件复制粘贴于此
 
@@ -20,13 +20,13 @@
 
 #### 原生App打包
 
-![image-20221024130500963](https://gitee.com/iLx1/resource-img/raw/master/image-20221024130500963.png)
+![image-20221024130500963](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024130500963.png)
 
 
 
 #### 打包页面填写证书信息
 
-![image-20221024130709381](https://gitee.com/iLx1/resource-img/raw/master/image-20221024130709381.png)
+![image-20221024130709381](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024130709381.png)
 
 
 
@@ -34,7 +34,7 @@
 
 1.配置java环境
 
-![image-20221024131012888](https://gitee.com/iLx1/resource-img/raw/master/image-20221024131012888.png)
+![image-20221024131012888](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024131012888.png)
 
 #### 进入高级系统设置 -> 
 
@@ -44,7 +44,7 @@
 
 ##### 变量值为jdk文件所在（java环境）
 
-![ ](https://gitee.com/iLx1/resource-img/raw/master/image-20221024131534797.png)
+![ ](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024131534797.png)
 
 #### 双击进入path
 
@@ -56,7 +56,7 @@
 
 
 
-![image-20221024131848704](https://gitee.com/iLx1/resource-img/raw/master/image-20221024131848704.png)
+![image-20221024131848704](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024131848704.png)
 
 #### 运行cmd
 
@@ -77,7 +77,7 @@ keytool -genkey -alias dodo -keyalg RSA -keysize 2048 -validity 36500 -keystore 
 
 #### 密钥口令自己设置
 
-![image-20221024134051738](https://gitee.com/iLx1/resource-img/raw/master/image-20221024134051738.png)
+![image-20221024134051738](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024134051738.png)
 
 #### 对应在打包页面输入
 
@@ -85,7 +85,7 @@ keytool -genkey -alias dodo -keyalg RSA -keysize 2048 -validity 36500 -keystore 
 
 #### 点击打包即可
 
-![image-20221024134322743](https://gitee.com/iLx1/resource-img/raw/master/image-20221024134322743.png)
+![image-20221024134322743](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20221024134322743.png)
 
 
 
