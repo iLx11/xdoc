@@ -1,11 +1,3 @@
----
-title: electron_vue
-date: 2023-10-17 20:34:10
-tags:
-categories:
-classes: 笔记
----
-
 # ELECTRON+VUE
 
 ### 项目模板
@@ -1598,6 +1590,28 @@ onMounted(() => {
 
 
 # electron打包
+
+### 引用静态路径
+
+#### 渲染层
+
+路径 `public/img/test.png` 
+
+示例引用 
+
+```js
+'./img/test.png'
+```
+
+#### 主进程
+
+路径 `public/json/test.json` 
+
+```js
+path.join(__dirname, '../xx/dist/test.json')
+```
+
+
 
 安装electron打包开发依赖
 
