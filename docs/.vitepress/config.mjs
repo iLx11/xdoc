@@ -6,8 +6,10 @@ export default defineConfig({
   title: 'iLx1',
   description: 'note and article',
   srcDir: './src',
-  assetsDir: 'static',
   base: '/xdoc/',
+  head: [
+    ['link', {rel: 'icon', href: '/icon.ico'}]
+  ],
   themeConfig: {
     outline: {
       level: [2, 4],

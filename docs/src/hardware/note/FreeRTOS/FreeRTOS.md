@@ -18,7 +18,7 @@ FreeRTOS 的相关例程
 
 需要里面的  `FreeRTOSConfig.h` 文件
 
-![](https://cdn.nlark.com/yuque/0/2024/png/25850055/1705044896586-c81fd625-c230-4a4a-9ae2-c866f4541d10.png)
+![](https://picr.oss-cn-qingdao.aliyuncs.com/img/1705044896586-c81fd625-c230-4a4a-9ae2-c866f4541d10.png)
 
 ##  License
 这个文件夹里面就是相关的许可信息，要用 FreeRTOS 做产品的得仔细看看，尤其是要出口的产品。  

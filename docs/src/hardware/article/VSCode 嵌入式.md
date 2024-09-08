@@ -1,11 +1,3 @@
----
-title: VSCode嵌入式
-date: 2024-02-28 22:35:00
-tags:
-categories:
-classes: 教程
----
-
 # 使用 VSCode 开发嵌入式
 
 因为是开源的，所以不用寻找激活码或者破解，非常方便、高效，还可以同时配置 esp32 开发环境，或者开发纯软件
@@ -91,7 +83,7 @@ code .
 
 在终端中输入，就可以对工程进行编译
 
-```shell
+```bash
 mingw32-make
 ```
 
@@ -99,7 +91,109 @@ mingw32-make
 
 以及 `elf` 、`hex\bin` 文件
 
+其中：
+
+- `text`：程序占用的 FLASH 空间大小（不包括初始化数据）。
+- `data`：初始化的全局变量和静态变量占用的 RAM 大小。
+- `bss`：未初始化的全局变量和静态变量占用的 RAM 大小。
+- `dec` 和 `hex`：是内存使用的十进制和十六进制表示。
+
 ![image-20240228230742853](https://picr.oss-cn-qingdao.aliyuncs.com/img/202402282307284.png)
+
+如果要配置比较直观的输出，类似：
+
+```bash
+Memory region         Used Size  Region Size  %age Used
+             RAM:       25128 B        64 KB     38.34%
+           FLASH:       69044 B       512 KB     13.17%
+```
+
+需要修改一下 `Makefile` 文件
+
+```makefile
+# before: 
+$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(SZ) $@
+
+# after
+$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(SZ) $@
+	@$(MAKE) memory_usage
+```
+
+然后在文件末尾，`dependencies` 上面增加
+
+```makefile
+#######################################
+# Show memory usage
+#######################################
+# 根据自己的芯片修改数据
+FLASH_SIZE = 524288  # 512KB
+RAM_SIZE = 65536     # 64KB
+
+memory_usage:
+	@$(SZ) $(BUILD_DIR)/$(TARGET).elf | awk 'NR==2 { \
+	flash_used = $$1 + $$2; \
+	ram_used = $$3; \
+	flash_percent = flash_used / $(FLASH_SIZE) * 100; \
+	ram_percent = ram_used / $(RAM_SIZE) * 100; \
+	printf "\nMemory region         Used Size  Region Size  %%age Used\n"; \
+	printf "             RAM: %10d B  %10d KB  %8.2f%%\n", ram_used, $(RAM_SIZE) / 1024, ram_percent; \
+	printf "           FLASH: %10d B  %10d KB  %8.2f%%\n", flash_used, $(FLASH_SIZE) / 1024, flash_percent; \
+	}'
+
+# 上面为增加内容
+#######################################
+# dependencies
+#######################################
+-include $(wildcard $(BUILD_DIR)/*.d)
+
+# *** EOF ***
+```
+
+### 如果报这个错误：
+
+```bash
+ 'awk' 不是内部或外部命令，也不是可运行的程序 或批处理文件。 mingw32-make[1]: *** [Makefile:204: memory_usage] Error 255 mingw32-make[1]: Leaving directory 'xxxxxx' mingw32-make: *** [Makefile:180: build/bootloader.elf] Error 2
+```
+
+#### 1. 打开 MSYS 终端
+
+打开 MSYS 或 MinGW 的终端窗口。
+
+#### 2. 使用 `pacman` 命令安装 Gawk
+
+在 MSYS 中，你可以使用包管理器 `pacman` 来安装 Gawk。运行以下命令：
+
+```bash
+pacman -S gawk
+```
+
+这个命令会自动下载并安装 Gawk 工具。
+
+#### 3. 验证安装
+
+安装完成后，运行以下命令来确认 Gawk 是否已成功安装：
+
+```
+gawk --version
+```
+
+如果显示 Gawk 的版本信息，则表示安装成功。
+
+#### 4. 设置系统环境变量（可选）
+
+如果你想从 Windows 命令行或其他环境中使用 Gawk，可以将 MSYS 的安装路径添加到 Windows 系统的 `PATH` 环境变量中。
+
+如果不行则添加下面的路径到系统变量
+
+```bash
+xxxx\MSYS2\usr\bin
+```
+
+
 
 ## 下载到硬件
 
@@ -208,7 +302,15 @@ openocd -f interface/stlink.cfg -f target/stm32f1x.cfg -c "program build/<工程
 
 ### 运行任务时：
 
-点击终端 -> 运行任务 -> build / download
+`点击终端(Terminal) -> 运行任务(Run Task) -> build / download`
+
+编译可以使用快捷键
+
+```js
+ctrl + shift + b
+```
+
+
 
 ## 调试程序
 
