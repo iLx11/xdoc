@@ -63,7 +63,10 @@ arm-none-eabi-gcc -v
 openocd -v
 ```
 
+## vscode 插件
 
+- c/c++
+- Makefile Tools
 
 # 创建工程
 
