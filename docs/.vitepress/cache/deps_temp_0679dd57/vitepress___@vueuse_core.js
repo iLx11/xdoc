@@ -1,10 +1,4 @@
 import {
-  del,
-  isVue2,
-  isVue3,
-  set
-} from "./chunk-NTMXYKHG.js";
-import {
   Fragment,
   TransitionGroup,
   computed,
@@ -40,9 +34,29 @@ import {
   version,
   watch,
   watchEffect
-} from "./chunk-IETZS6B6.js";
+} from "./chunk-Q56VL3NH.js";
 
-// node_modules/.pnpm/@vueuse+shared@11.0.1_vue@3.4.38/node_modules/@vueuse/shared/index.mjs
+// node_modules/.pnpm/vitepress@1.4.0_@algolia+client-search@5.8.0_search-insights@2.17.2/node_modules/vitepress/lib/vue-demi.mjs
+var isVue2 = false;
+var isVue3 = true;
+function set(target, key, val) {
+  if (Array.isArray(target)) {
+    target.length = Math.max(target.length, key);
+    target.splice(key, 1, val);
+    return val;
+  }
+  target[key] = val;
+  return val;
+}
+function del(target, key) {
+  if (Array.isArray(target)) {
+    target.splice(key, 1);
+    return;
+  }
+  delete target[key];
+}
+
+// node_modules/.pnpm/@vueuse+shared@11.1.0_vue@3.5.11/node_modules/@vueuse/shared/index.mjs
 function computedEager(fn, options) {
   var _a;
   const result = shallowRef();
@@ -129,6 +143,16 @@ function createGlobalState(stateFactory) {
   };
 }
 var localProvidedStateMap = /* @__PURE__ */ new WeakMap();
+var injectLocal = (...args) => {
+  var _a;
+  const key = args[0];
+  const instance = (_a = getCurrentInstance()) == null ? void 0 : _a.proxy;
+  if (instance == null)
+    throw new Error("injectLocal must be called in setup");
+  if (localProvidedStateMap.has(instance) && key in localProvidedStateMap.get(instance))
+    return localProvidedStateMap.get(instance)[key];
+  return inject(...args);
+};
 var provideLocal = (key, value) => {
   var _a;
   const instance = (_a = getCurrentInstance()) == null ? void 0 : _a.proxy;
@@ -139,16 +163,6 @@ var provideLocal = (key, value) => {
   const localProvidedState = localProvidedStateMap.get(instance);
   localProvidedState[key] = value;
   provide(key, value);
-};
-var injectLocal = (...args) => {
-  var _a;
-  const key = args[0];
-  const instance = (_a = getCurrentInstance()) == null ? void 0 : _a.proxy;
-  if (instance == null)
-    throw new Error("injectLocal must be called in setup");
-  if (localProvidedStateMap.has(instance) && key in localProvidedStateMap.get(instance))
-    return localProvidedStateMap.get(instance)[key];
-  return inject(...args);
 };
 function createInjectionState(composable, options) {
   const key = (options == null ? void 0 : options.injectionKey) || Symbol(composable.name || "InjectionState");
@@ -175,7 +189,7 @@ function createSharedComposable(composable) {
   };
   return (...args) => {
     subscribers += 1;
-    if (!state) {
+    if (!scope) {
       scope = effectScope(true);
       state = scope.run(() => composable(...args));
     }
@@ -308,6 +322,11 @@ function reactiveOmit(obj, ...keys2) {
   const predicate = flatKeys[0];
   return reactiveComputed(() => typeof predicate === "function" ? Object.fromEntries(Object.entries(toRefs(obj)).filter(([k, v]) => !predicate(toValue(v), k))) : Object.fromEntries(Object.entries(toRefs(obj)).filter((e) => !flatKeys.includes(e[0]))));
 }
+var directiveHooks = {
+  mounted: isVue3 ? "mounted" : "inserted",
+  updated: isVue3 ? "updated" : "componentUpdated",
+  unmounted: isVue3 ? "unmounted" : "unbind"
+};
 var isClient = typeof window !== "undefined" && typeof document !== "undefined";
 var isWorker = typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
 var isDef = (val) => typeof val !== "undefined";
@@ -454,11 +473,6 @@ function pausableFilter(extendFilter = bypassFilter) {
   };
   return { isActive: readonly(isActive), pause, resume, eventFilter };
 }
-var directiveHooks = {
-  mounted: isVue3 ? "mounted" : "inserted",
-  updated: isVue3 ? "updated" : "componentUpdated",
-  unmounted: isVue3 ? "unmounted" : "unbind"
-};
 function cacheStringFunction(fn) {
   const cache = /* @__PURE__ */ Object.create(null);
   return (str) => {
@@ -1545,7 +1559,7 @@ function whenever(source, cb, options) {
   return stop;
 }
 
-// node_modules/.pnpm/@vueuse+core@11.0.1_vue@3.4.38/node_modules/@vueuse/core/index.mjs
+// node_modules/.pnpm/@vueuse+core@11.1.0_vue@3.5.11/node_modules/@vueuse/core/index.mjs
 function computedAsync(evaluationCallback, initialState, optionsOrRef) {
   let options;
   if (isRef(optionsOrRef)) {
@@ -1715,15 +1729,15 @@ function createUnrefFn(fn) {
     return fn.apply(this, args.map((i) => toValue(i)));
   };
 }
+var defaultWindow = isClient ? window : void 0;
+var defaultDocument = isClient ? window.document : void 0;
+var defaultNavigator = isClient ? window.navigator : void 0;
+var defaultLocation = isClient ? window.location : void 0;
 function unrefElement(elRef) {
   var _a;
   const plain = toValue(elRef);
   return (_a = plain == null ? void 0 : plain.$el) != null ? _a : plain;
 }
-var defaultWindow = isClient ? window : void 0;
-var defaultDocument = isClient ? window.document : void 0;
-var defaultNavigator = isClient ? window.navigator : void 0;
-var defaultLocation = isClient ? window.location : void 0;
 function useEventListener(...args) {
   let target;
   let events2;
@@ -1784,7 +1798,7 @@ function onClickOutside(target, handler, options = {}) {
   }
   let shouldListen = true;
   const shouldIgnore = (event) => {
-    return ignore.some((target2) => {
+    return toValue(ignore).some((target2) => {
       if (typeof target2 === "string") {
         return Array.from(window2.document.querySelectorAll(target2)).some((el) => el === event.target || event.composedPath().includes(el));
       } else {
@@ -1805,8 +1819,17 @@ function onClickOutside(target, handler, options = {}) {
     }
     handler(event);
   };
+  let isProcessingClick = false;
   const cleanup = [
-    useEventListener(window2, "click", listener, { passive: true, capture }),
+    useEventListener(window2, "click", (event) => {
+      if (!isProcessingClick) {
+        isProcessingClick = true;
+        setTimeout(() => {
+          isProcessingClick = false;
+        }, 0);
+        listener(event);
+      }
+    }, { passive: true, capture }),
     useEventListener(window2, "pointerdown", (e) => {
       const el = unrefElement(target);
       shouldListen = !shouldIgnore(e) && !!(el && !e.composedPath().includes(el));
@@ -2982,20 +3005,21 @@ function usePermission(permissionDesc, options = {}) {
   const permissionStatus = shallowRef();
   const desc = typeof permissionDesc === "string" ? { name: permissionDesc } : permissionDesc;
   const state = shallowRef();
-  const onChange = () => {
-    if (permissionStatus.value)
-      state.value = permissionStatus.value.state;
+  const update = () => {
+    var _a, _b;
+    state.value = (_b = (_a = permissionStatus.value) == null ? void 0 : _a.state) != null ? _b : "prompt";
   };
-  useEventListener(permissionStatus, "change", onChange);
+  useEventListener(permissionStatus, "change", update);
   const query = createSingletonPromise(async () => {
     if (!isSupported.value)
       return;
     if (!permissionStatus.value) {
       try {
         permissionStatus.value = await navigator.permissions.query(desc);
-        onChange();
       } catch (e) {
-        state.value = "prompt";
+        permissionStatus.value = void 0;
+      } finally {
+        update();
       }
     }
     if (controls)
@@ -3147,6 +3171,9 @@ function getSSRHandler(key, fallback) {
 }
 function setSSRHandler(key, fn) {
   handlers[key] = fn;
+}
+function usePreferredDark(options) {
+  return useMediaQuery("(prefers-color-scheme: dark)", options);
 }
 function guessSerializerType(rawInit) {
   return rawInit == null ? "any" : rawInit instanceof Set ? "set" : rawInit instanceof Map ? "map" : rawInit instanceof Date ? "date" : typeof rawInit === "boolean" ? "boolean" : typeof rawInit === "string" ? "string" : typeof rawInit === "object" ? "object" : !Number.isNaN(rawInit) ? "number" : "any";
@@ -3311,9 +3338,6 @@ function useStorage(key, defaults2, storage, options = {}) {
   }
   return data;
 }
-function usePreferredDark(options) {
-  return useMediaQuery("(prefers-color-scheme: dark)", options);
-}
 var CSS_DISABLE_TRANS = "*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}";
 function useColorMode(options = {}) {
   const {
@@ -3464,8 +3488,8 @@ function useCssVar(prop, target, options = {}) {
   watch(
     [elRef, () => toValue(prop)],
     (_, old) => {
-      if (old[0] && old[1] && window2)
-        window2.getComputedStyle(old[0]).removeProperty(old[1]);
+      if (old[0] && old[1])
+        old[0].style.removeProperty(old[1]);
       updateCssVar();
     },
     { immediate: true }
@@ -4026,55 +4050,81 @@ function useDraggable(target, options = {}) {
   };
 }
 function useDropZone(target, options = {}) {
+  var _a, _b;
   const isOverDropZone = ref(false);
   const files = shallowRef(null);
   let counter = 0;
-  let isDataTypeIncluded = true;
+  let isValid = true;
   if (isClient) {
     const _options = typeof options === "function" ? { onDrop: options } : options;
+    const multiple = (_a = _options.multiple) != null ? _a : true;
+    const preventDefaultForUnhandled = (_b = _options.preventDefaultForUnhandled) != null ? _b : false;
     const getFiles = (event) => {
-      var _a, _b;
-      const list = Array.from((_b = (_a = event.dataTransfer) == null ? void 0 : _a.files) != null ? _b : []);
-      return files.value = list.length === 0 ? null : list;
+      var _a2, _b2;
+      const list = Array.from((_b2 = (_a2 = event.dataTransfer) == null ? void 0 : _a2.files) != null ? _b2 : []);
+      return list.length === 0 ? null : multiple ? list : [list[0]];
     };
-    useEventListener(target, "dragenter", (event) => {
-      var _a, _b;
-      const types = Array.from(((_a = event == null ? void 0 : event.dataTransfer) == null ? void 0 : _a.items) || []).map((i) => i.kind === "file" ? i.type : null).filter(notNullish);
-      if (_options.dataTypes && event.dataTransfer) {
+    const checkDataTypes = (types) => {
+      if (_options.dataTypes) {
         const dataTypes = unref(_options.dataTypes);
-        isDataTypeIncluded = typeof dataTypes === "function" ? dataTypes(types) : dataTypes ? dataTypes.some((item) => types.includes(item)) : true;
-        if (!isDataTypeIncluded)
-          return;
+        return typeof dataTypes === "function" ? dataTypes(types) : dataTypes ? dataTypes.some((item) => types.includes(item)) : true;
+      }
+      return true;
+    };
+    const checkValidity = (event) => {
+      var _a2, _b2;
+      const items = Array.from((_b2 = (_a2 = event.dataTransfer) == null ? void 0 : _a2.items) != null ? _b2 : []);
+      const types = items.filter((item) => item.kind === "file").map((item) => item.type);
+      const dataTypesValid = checkDataTypes(types);
+      const multipleFilesValid = multiple || items.filter((item) => item.kind === "file").length <= 1;
+      return dataTypesValid && multipleFilesValid;
+    };
+    const handleDragEvent = (event, eventType) => {
+      var _a2, _b2, _c, _d;
+      isValid = checkValidity(event);
+      if (!isValid) {
+        if (preventDefaultForUnhandled) {
+          event.preventDefault();
+        }
+        if (event.dataTransfer) {
+          event.dataTransfer.dropEffect = "none";
+        }
+        return;
       }
       event.preventDefault();
-      counter += 1;
-      isOverDropZone.value = true;
-      (_b = _options.onEnter) == null ? void 0 : _b.call(_options, getFiles(event), event);
-    });
-    useEventListener(target, "dragover", (event) => {
-      var _a;
-      if (!isDataTypeIncluded)
-        return;
-      event.preventDefault();
-      (_a = _options.onOver) == null ? void 0 : _a.call(_options, getFiles(event), event);
-    });
-    useEventListener(target, "dragleave", (event) => {
-      var _a;
-      if (!isDataTypeIncluded)
-        return;
-      event.preventDefault();
-      counter -= 1;
-      if (counter === 0)
-        isOverDropZone.value = false;
-      (_a = _options.onLeave) == null ? void 0 : _a.call(_options, getFiles(event), event);
-    });
-    useEventListener(target, "drop", (event) => {
-      var _a;
-      event.preventDefault();
-      counter = 0;
-      isOverDropZone.value = false;
-      (_a = _options.onDrop) == null ? void 0 : _a.call(_options, getFiles(event), event);
-    });
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = "copy";
+      }
+      const currentFiles = getFiles(event);
+      switch (eventType) {
+        case "enter":
+          counter += 1;
+          isOverDropZone.value = true;
+          (_a2 = _options.onEnter) == null ? void 0 : _a2.call(_options, null, event);
+          break;
+        case "over":
+          (_b2 = _options.onOver) == null ? void 0 : _b2.call(_options, null, event);
+          break;
+        case "leave":
+          counter -= 1;
+          if (counter === 0)
+            isOverDropZone.value = false;
+          (_c = _options.onLeave) == null ? void 0 : _c.call(_options, null, event);
+          break;
+        case "drop":
+          counter = 0;
+          isOverDropZone.value = false;
+          if (isValid) {
+            files.value = currentFiles;
+            (_d = _options.onDrop) == null ? void 0 : _d.call(_options, currentFiles, event);
+          }
+          break;
+      }
+    };
+    useEventListener(target, "dragenter", (event) => handleDragEvent(event, "enter"));
+    useEventListener(target, "dragover", (event) => handleDragEvent(event, "over"));
+    useEventListener(target, "dragleave", (event) => handleDragEvent(event, "leave"));
+    useEventListener(target, "drop", (event) => handleDragEvent(event, "drop"));
   }
   return {
     files,
@@ -4892,7 +4942,8 @@ function useFileDialog(options = {}) {
     document: document2 = defaultDocument
   } = options;
   const files = ref(null);
-  const { on: onChange, trigger } = createEventHook();
+  const { on: onChange, trigger: changeTrigger } = createEventHook();
+  const { on: onCancel, trigger: cancelTrigger } = createEventHook();
   let input;
   if (document2) {
     input = document2.createElement("input");
@@ -4900,14 +4951,17 @@ function useFileDialog(options = {}) {
     input.onchange = (event) => {
       const result = event.target;
       files.value = result.files;
-      trigger(files.value);
+      changeTrigger(files.value);
+    };
+    input.oncancel = () => {
+      cancelTrigger();
     };
   }
   const reset = () => {
     files.value = null;
     if (input && input.value) {
       input.value = "";
-      trigger(null);
+      changeTrigger(null);
     }
   };
   const open = (localOptions) => {
@@ -4931,6 +4985,7 @@ function useFileDialog(options = {}) {
     files: readonly(files),
     open,
     reset,
+    onCancel,
     onChange
   };
 }
@@ -5057,10 +5112,19 @@ function useFocus(target, options = {}) {
   );
   return { focused };
 }
+var EVENT_FOCUS_IN = "focusin";
+var EVENT_FOCUS_OUT = "focusout";
 function useFocusWithin(target, options = {}) {
-  const activeElement = useActiveElement(options);
+  const { window: window2 = defaultWindow } = options;
   const targetElement = computed(() => unrefElement(target));
-  const focused = computed(() => targetElement.value && activeElement.value ? targetElement.value.contains(activeElement.value) : false);
+  const _focused = ref(false);
+  const focused = computed(() => _focused.value);
+  const activeElement = useActiveElement(options);
+  if (!window2 || !activeElement.value) {
+    return { focused };
+  }
+  useEventListener(targetElement, EVENT_FOCUS_IN, () => _focused.value = true);
+  useEventListener(targetElement, EVENT_FOCUS_OUT, () => _focused.value = false);
   return { focused };
 }
 function useFps(options) {
@@ -5446,6 +5510,13 @@ function useImage(options, asyncStateOptions = {}) {
   );
   return state;
 }
+function resolveElement(el) {
+  if (typeof Window !== "undefined" && el instanceof Window)
+    return el.document.documentElement;
+  if (typeof Document !== "undefined" && el instanceof Document)
+    return el.documentElement;
+  return el;
+}
 var ARRIVED_STATE_THRESHOLD_PIXELS = 1;
 function useScroll(element, options = {}) {
   const {
@@ -5609,13 +5680,6 @@ function useScroll(element, options = {}) {
     }
   };
 }
-function resolveElement(el) {
-  if (typeof Window !== "undefined" && el instanceof Window)
-    return el.document.documentElement;
-  if (typeof Document !== "undefined" && el instanceof Document)
-    return el.documentElement;
-  return el;
-}
 function useInfiniteScroll(element, onLoadMore, options = {}) {
   var _a;
   const {
@@ -5657,11 +5721,12 @@ function useInfiniteScroll(element, onLoadMore, options = {}) {
       }
     }
   }
-  watch(
+  const stop = watch(
     () => [state.arrivedState[direction], isElementVisible.value],
     checkAndLoad,
     { immediate: true }
   );
+  tryOnUnmounted(stop);
   return {
     isLoading,
     reset() {
@@ -6174,7 +6239,7 @@ function useMouseInElement(target, options = {}) {
       [targetRef, x, y],
       () => {
         const el = unrefElement(targetRef);
-        if (!el || !(el instanceof HTMLElement))
+        if (!el || !(el instanceof Element))
           return;
         const {
           left,
@@ -6314,16 +6379,16 @@ function useNetwork(options = {}) {
     useEventListener(connection, "change", updateNetworkInformation, false);
   updateNetworkInformation();
   return {
-    isSupported,
-    isOnline,
-    saveData,
-    offlineAt,
-    onlineAt,
-    downlink,
-    downlinkMax,
-    effectiveType,
-    rtt,
-    type
+    isSupported: readonly(isSupported),
+    isOnline: readonly(isOnline),
+    saveData: readonly(saveData),
+    offlineAt: readonly(offlineAt),
+    onlineAt: readonly(onlineAt),
+    downlink: readonly(downlink),
+    downlinkMax: readonly(downlinkMax),
+    effectiveType: readonly(effectiveType),
+    rtt: readonly(rtt),
+    type: readonly(type)
   };
 }
 function useNow(options = {}) {
@@ -8629,6 +8694,7 @@ function useWebSocket(url, options = {}) {
     status.value = "CONNECTING";
     ws.onopen = () => {
       status.value = "OPEN";
+      retried = 0;
       onConnected == null ? void 0 : onConnected(ws);
       heartbeatResume == null ? void 0 : heartbeatResume();
       _sendBuffer();
@@ -8636,19 +8702,20 @@ function useWebSocket(url, options = {}) {
     ws.onclose = (ev) => {
       status.value = "CLOSED";
       onDisconnected == null ? void 0 : onDisconnected(ws, ev);
-      if (!explicitlyClosed && options.autoReconnect) {
+      if (!explicitlyClosed && options.autoReconnect && ws === wsRef.value) {
         const {
           retries = -1,
           delay = 1e3,
           onFailed
         } = resolveNestedOptions(options.autoReconnect);
-        retried += 1;
-        if (typeof retries === "number" && (retries < 0 || retried < retries))
+        if (typeof retries === "number" && (retries < 0 || retried < retries)) {
+          retried += 1;
           setTimeout(_init, delay);
-        else if (typeof retries === "function" && retries())
+        } else if (typeof retries === "function" && retries()) {
           setTimeout(_init, delay);
-        else
+        } else {
           onFailed == null ? void 0 : onFailed();
+        }
       }
     };
     ws.onerror = (e) => {
@@ -8753,16 +8820,6 @@ function useWebWorker(arg0, workerOptions, options) {
     worker
   };
 }
-function jobRunner(userFunc) {
-  return (e) => {
-    const userFuncArgs = e.data[0];
-    return Promise.resolve(userFunc.apply(void 0, userFuncArgs)).then((result) => {
-      postMessage(["SUCCESS", result]);
-    }).catch((error) => {
-      postMessage(["ERROR", error]);
-    });
-  };
-}
 function depsParser(deps, localDeps) {
   if (deps.length === 0 && localDeps.length === 0)
     return "";
@@ -8778,6 +8835,16 @@ function depsParser(deps, localDeps) {
   }).join(";");
   const importString = `importScripts(${depsString});`;
   return `${depsString.trim() === "" ? "" : importString} ${depsFunctionString}`;
+}
+function jobRunner(userFunc) {
+  return (e) => {
+    const userFuncArgs = e.data[0];
+    return Promise.resolve(userFunc.apply(void 0, userFuncArgs)).then((result) => {
+      postMessage(["SUCCESS", result]);
+    }).catch((error) => {
+      postMessage(["ERROR", error]);
+    });
+  };
 }
 function createWorkerBlobUrl(fn, deps, localDeps) {
   const blobCode = `${depsParser(deps, localDeps)}; onmessage=(${jobRunner})(${fn})`;
@@ -8955,81 +9022,130 @@ function useWindowSize(options = {}) {
   }
   return { width, height };
 }
-
 export {
+  DefaultMagicKeysAliasMap,
+  StorageSerializers,
+  TransitionPresets,
+  assert,
+  computedAsync as asyncComputed,
+  refAutoReset as autoResetRef,
+  breakpointsAntDesign,
+  breakpointsBootstrapV5,
+  breakpointsMasterCss,
+  breakpointsPrimeFlex,
+  breakpointsQuasar,
+  breakpointsSematic,
+  breakpointsTailwind,
+  breakpointsVuetify,
+  breakpointsVuetifyV2,
+  breakpointsVuetifyV3,
+  bypassFilter,
+  camelize,
+  clamp,
+  cloneFnJSON,
+  computedAsync,
   computedEager,
+  computedInject,
   computedWithControl,
-  tryOnScopeDispose,
+  containsProp,
+  computedWithControl as controlledComputed,
+  controlledRef,
   createEventHook,
+  createFetch,
+  createFilterWrapper,
   createGlobalState,
-  provideLocal,
-  injectLocal,
   createInjectionState,
+  reactify as createReactiveFn,
+  createReusableTemplate,
   createSharedComposable,
+  createSingletonPromise,
+  createTemplatePromise,
+  createUnrefFn,
+  customStorageEventName,
+  debounceFilter,
+  refDebounced as debouncedRef,
+  watchDebounced as debouncedWatch,
+  defaultDocument,
+  defaultLocation,
+  defaultNavigator,
+  defaultWindow,
+  directiveHooks,
+  computedEager as eagerComputed,
+  executeTransition,
   extendRef,
+  formatDate,
+  formatTimeAgo,
   get,
+  getLifeCycleTarget,
+  getSSRHandler,
+  hasOwn,
+  hyphenate,
+  identity,
+  watchIgnorable as ignorableWatch,
+  increaseWithUnit,
+  injectLocal,
+  invoke,
+  isClient,
+  isDef,
   isDefined,
+  isIOS,
+  isObject,
+  isWorker,
   makeDestructurable,
-  toValue,
-  resolveUnref,
+  mapGamepadToXbox360Controller,
+  noop,
+  normalizeDate,
+  notNullish,
+  now,
+  objectEntries,
+  objectOmit,
+  objectPick,
+  onClickOutside,
+  onKeyDown,
+  onKeyPressed,
+  onKeyStroke,
+  onKeyUp,
+  onLongPress,
+  onStartTyping,
+  pausableFilter,
+  watchPausable as pausableWatch,
+  promiseTimeout,
+  provideLocal,
+  rand,
   reactify,
   reactifyObject,
-  toReactive,
   reactiveComputed,
   reactiveOmit,
-  isClient,
-  isWorker,
-  isDef,
-  notNullish,
-  assert,
-  isObject,
-  now,
-  timestamp,
-  clamp,
-  noop,
-  rand,
-  hasOwn,
-  isIOS,
-  createFilterWrapper,
-  bypassFilter,
-  debounceFilter,
-  throttleFilter,
-  pausableFilter,
-  directiveHooks,
-  hyphenate,
-  camelize,
-  promiseTimeout,
-  identity,
-  createSingletonPromise,
-  invoke,
-  containsProp,
-  increaseWithUnit,
-  objectPick,
-  objectOmit,
-  objectEntries,
-  getLifeCycleTarget,
-  toRef2 as toRef,
-  resolveRef,
   reactivePick,
   refAutoReset,
-  useDebounceFn,
   refDebounced,
   refDefault,
-  useThrottleFn,
   refThrottled,
   refWithControl,
-  controlledRef,
+  resolveRef,
+  resolveUnref,
   set2 as set,
-  watchWithFilter,
-  watchPausable,
+  setSSRHandler,
   syncRef,
   syncRefs,
+  templateRef,
+  throttleFilter,
+  refThrottled as throttledRef,
+  watchThrottled as throttledWatch,
+  timestamp,
+  toReactive,
+  toRef2 as toRef,
   toRefs2 as toRefs,
+  toValue,
   tryOnBeforeMount,
   tryOnBeforeUnmount,
   tryOnMounted,
+  tryOnScopeDispose,
   tryOnUnmounted,
+  unrefElement,
   until,
+  useActiveElement,
+  useAnimate,
   useArrayDifference,
   useArrayEvery,
   useArrayFilter,
@@ -9042,92 +9158,28 @@ export {
   useArrayReduce,
   useArraySome,
   useArrayUnique,
-  useCounter,
-  formatDate,
-  normalizeDate,
-  useDateFormat,
-  useIntervalFn,
-  useInterval,
-  useLastChanged,
-  useTimeoutFn,
-  useTimeout,
-  useToNumber,
-  useToString,
-  useToggle,
-  watchArray,
-  watchAtMost,
-  watchDebounced,
-  watchDeep,
-  watchIgnorable,
-  watchImmediate,
-  watchOnce,
-  watchThrottled,
-  watchTriggerable,
-  whenever,
-  computedAsync,
-  computedInject,
-  createReusableTemplate,
-  createTemplatePromise,
-  createUnrefFn,
-  unrefElement,
-  defaultWindow,
-  defaultDocument,
-  defaultNavigator,
-  defaultLocation,
-  useEventListener,
-  onClickOutside,
-  onKeyStroke,
-  onKeyDown,
-  onKeyPressed,
-  onKeyUp,
-  onLongPress,
-  onStartTyping,
-  templateRef,
-  useMounted,
-  useSupported,
-  useMutationObserver,
-  useActiveElement,
-  useRafFn,
-  useAnimate,
   useAsyncQueue,
   useAsyncState,
   useBase64,
   useBattery,
   useBluetooth,
-  useMediaQuery,
-  breakpointsTailwind,
-  breakpointsBootstrapV5,
-  breakpointsVuetifyV2,
-  breakpointsVuetifyV3,
-  breakpointsVuetify,
-  breakpointsAntDesign,
-  breakpointsQuasar,
-  breakpointsSematic,
-  breakpointsMasterCss,
-  breakpointsPrimeFlex,
   useBreakpoints,
   useBroadcastChannel,
   useBrowserLocation,
   useCached,
-  usePermission,
   useClipboard,
   useClipboardItems,
-  cloneFnJSON,
   useCloned,
-  getSSRHandler,
-  setSSRHandler,
-  StorageSerializers,
-  customStorageEventName,
-  useStorage,
-  usePreferredDark,
   useColorMode,
   useConfirmDialog,
+  useCounter,
   useCssVar,
   useCurrentElement,
   useCycleList,
   useDark,
-  useManualRefHistory,
-  useRefHistory,
+  useDateFormat,
+  refDebounced as useDebounce,
+  useDebounceFn,
   useDebouncedRefHistory,
   useDeviceMotion,
   useDeviceOrientation,
@@ -9137,18 +9189,16 @@ export {
   useDocumentVisibility,
   useDraggable,
   useDropZone,
-  useResizeObserver,
   useElementBounding,
   useElementByPoint,
   useElementHover,
   useElementSize,
-  useIntersectionObserver,
   useElementVisibility,
   useEventBus,
+  useEventListener,
   useEventSource,
   useEyeDropper,
   useFavicon,
-  createFetch,
   useFetch,
   useFileDialog,
   useFileSystemAccess,
@@ -9156,23 +9206,28 @@ export {
   useFocusWithin,
   useFps,
   useFullscreen,
-  mapGamepadToXbox360Controller,
   useGamepad,
   useGeolocation,
   useIdle,
   useImage,
-  useScroll,
   useInfiniteScroll,
+  useIntersectionObserver,
+  useInterval,
+  useIntervalFn,
   useKeyModifier,
+  useLastChanged,
   useLocalStorage,
-  DefaultMagicKeysAliasMap,
   useMagicKeys,
+  useManualRefHistory,
   useMediaControls,
+  useMediaQuery,
   useMemoize,
   useMemory,
+  useMounted,
   useMouse,
   useMouseInElement,
   useMousePressed,
+  useMutationObserver,
   useNavigatorLanguage,
   useNetwork,
   useNow,
@@ -9180,20 +9235,26 @@ export {
   useOffsetPagination,
   useOnline,
   usePageLeave,
-  useScreenOrientation,
   useParallax,
   useParentElement,
   usePerformanceObserver,
+  usePermission,
   usePointer,
   usePointerLock,
   usePointerSwipe,
   usePreferredColorScheme,
   usePreferredContrast,
+  usePreferredDark,
   usePreferredLanguages,
   usePreferredReducedMotion,
   usePrevious,
+  useRafFn,
+  useRefHistory,
+  useResizeObserver,
+  useScreenOrientation,
   useScreenSafeArea,
   useScriptTag,
+  useScroll,
   useScrollLock,
   useSessionStorage,
   useShare,
@@ -9201,21 +9262,27 @@ export {
   useSpeechRecognition,
   useSpeechSynthesis,
   useStepper,
+  useStorage,
   useStorageAsync,
   useStyleTag,
+  useSupported,
   useSwipe,
   useTemplateRefsList,
   useTextDirection,
   useTextSelection,
   useTextareaAutosize,
+  refThrottled as useThrottle,
+  useThrottleFn,
   useThrottledRefHistory,
   useTimeAgo,
-  formatTimeAgo,
+  useTimeout,
+  useTimeoutFn,
   useTimeoutPoll,
   useTimestamp,
   useTitle,
-  TransitionPresets,
-  executeTransition,
+  useToNumber,
+  useToString,
+  useToggle,
   useTransition,
   useUrlSearchParams,
   useUserMedia,
@@ -9230,6 +9297,27 @@ export {
   useWebWorkerFn,
   useWindowFocus,
   useWindowScroll,
-  useWindowSize
+  useWindowSize,
+  watchArray,
+  watchAtMost,
+  watchDebounced,
+  watchDeep,
+  watchIgnorable,
+  watchImmediate,
+  watchOnce,
+  watchPausable,
+  watchThrottled,
+  watchTriggerable,
+  watchWithFilter,
+  whenever
 };
-//# sourceMappingURL=chunk-CMWF5OKI.js.map
+/*! Bundled license information:
+
+vitepress/lib/vue-demi.mjs:
+  (**
+   * vue-demi v0.14.7
+   * Copyright (c) 2020-present, Anthony Fu
+   * @license MIT
+   *)
+*/
+//# sourceMappingURL=vitepress___@vueuse_core.js.map
