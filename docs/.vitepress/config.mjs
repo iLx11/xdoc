@@ -66,6 +66,11 @@ export default defineConfig({
           collapsed: false,
           items: sidebarPathGen('/other/note/'),
         },
+        {
+          text: '资源',
+          collapsed: false,
+          items: sidebarPathGen('/other/resource/'),
+        },
       ],
     },
     socialLinks: [{ icon: 'github', link: 'https://github.com/iLx11' }],

@@ -309,7 +309,212 @@ base: '/xdoc/',
 
 只需要执行 git 的本地三部走 （已经添加了远程仓库，可以看我关于 git 的文章）
 
-```
+```bash
 git add .
 git commit -m "xxxx"
 git push origin master
+```
+
+
+
+# 常用语法
+
+## 目录表 (TOC)
+
+**输入**
+
+```md
+[[toc]]
+```
+
+## 自定义容器
+
+自定义容器可以通过它们的类型、标题和内容来定义。
+
+### 默认标题
+
+**输入
+
+```md
+::: info
+This is an info box.
+:::
+
+::: tip
+This is a tip.
+:::
+
+::: warning
+This is a warning.
+:::
+
+::: danger
+This is a dangerous warning.
+:::
+
+::: details
+This is a details block.
+:::
+```
+
+### 自定义标题
+
+可以通过在容器的 "type" 之后附加文本来设置自定义标题。
+
+````md
+::: danger STOP
+危险区域，请勿继续
+:::
+
+::: details 点我查看代码
+```js
+console.log('Hello, VitePress!')
+```
+:::
+````
+
+### raw
+
+这是一个特殊的容器，可以用来防止与 VitePress 的样式和路由冲突。这在记录组件库时特别有用。可能还想查看 [whyframe](https://whyframe.dev/docs/integrations/vitepress) 以获得更好的隔离。
+
+**语法**
+
+md
+
+```
+::: raw
+Wraps in a <div class="vp-raw">
+:::
+```
+
+## 在代码块中实现行高亮
+
+**输入**
+
+~~~md
+```js{4}
+export default {
+  data () {
+    return {
+      msg: 'Highlighted!'
+    }
+  }
+}
+```
+~~~
+
+除了单行之外，还可以指定多个单行、多行，或两者均指定：
+
+- 多行：例如 `{5-8}`、`{3-10}`、`{10-17}`
+- 多个单行：例如 `{4,7,9}`
+- 多行与单行：例如 `{4,7-13,16,23-27,40}`
+
+也可以使用 `// [!code highlight]` 注释实现行高亮。
+
+此外，可以使用 `// [!code highlight:<lines>]` 定义要高亮的行数。
+
+**输入**
+
+````
+```js
+export default {
+  data () {
+    return {
+      msg: 'Highlighted!' // [!code highlight]
+    }
+  }
+}
+```
+````
+
+## 代码块中聚焦
+
+在某一行上添加 `// [!code focus]` 注释将聚焦它并模糊代码的其他部分。
+
+此外，可以使用 `// [!code focus:<lines>]` 定义要聚焦的行数。
+
+**输入**
+
+````
+```js
+export default {
+  data () {
+    return {
+      msg: 'Focused!' // [!code focus]
+    }
+  }
+}
+```
+````
+
+## 代码块中的颜色差异
+
+在某一行添加 `// [!code --]` 或 `// [!code ++]` 注释将会为该行创建 diff，同时保留代码块的颜色。
+
+**输入**
+
+````
+```js
+export default {
+  data () {
+    return {
+      msg: 'Removed' // [!code --]
+      msg: 'Added' // [!code s
+    }
+  }
+}
+```
+````
+
+## 高亮“错误”和“警告”
+
+在某一行添加 `// [!code warning]` 或 `// [!code error]` 注释将会为该行相应的着色。
+
+**输入**
+
+````
+```js
+export default {
+  data () {
+    return {
+      msg: 'Error', // [!code error]
+      msg: 'Warning' // [!code warning]
+    }
+  }
+}
+```
+````
+
+## 数学方程
+
+现在这是可选的。要启用它，需要安装 `markdown-it-mathjax3`，在配置文件中设置`markdown.math` 为 `true`：
+
+```sh
+npm add -D markdown-it-mathjax3
+```
+
+
+
+```ts
+// .vitepress/config.ts
+export default {
+  markdown: {
+    math: true
+  }
+}
+```
+
+**输入**
+
+```
+When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are
+$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
+
+**Maxwell's equations:**
+
+| equation                                                                                                                                                                  | description                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| $\nabla \cdot \vec{\mathbf{B}}  = 0$                                                                                                                                      | divergence of $\vec{\mathbf{B}}$ is zero                                               |
+| $\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t}  = \vec{\mathbf{0}}$                                                          | curl of $\vec{\mathbf{E}}$ is proportional to the rate of change of $\vec{\mathbf{B}}$ |
+| $\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} = \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} = 4 \pi \rho$ | _wha?_                                                                                 |
+```
