@@ -216,7 +216,10 @@ export default class CreateWindow {
       // winURL = windowConfig.route ? `app://../../dist/index.html` : `file://${path.join(__dirname, '../../dist/index.html')}`
       win.loadFile(join(__dirname, '../../dist/index.html'), { hash: windowConfig.route })
     } else {
-      winURL = windowConfig.route ? `http://localhost:${process.env['VITE_DEV_SERVER_PORT']}/#${windowConfig.route}` : `http://localhost:${process.env['VITE_DEV_SERVER_PORT']}/#`
+      //winURL = windowConfig.route ? `http://localhost:${process.env['VITE_DEV_SERVER_PORT']}/#${windowConfig.route}` : `http://localhost:${process.env['VITE_DEV_SERVER_PORT']}/#`
+      winURL = windowConfig.route
+        ? `${process.env.VITE_DEV_SERVER_URL}/#${windowConfig.route}`
+        : `${process.env.VITE_DEV_SERVER_URL}}/#`
       win.loadURL(winURL)
     }
     console.info('new window address -> ', winURL)
