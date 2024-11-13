@@ -8,7 +8,7 @@ classes: 笔记
 
 ## 创建 Vue3 项目
 
-### vue-cil
+### 使用 vue-cil
 
 ```sh
 npm install -g @vue/cli
@@ -24,7 +24,7 @@ vue create project
 # Sava preset(模板)
 ```
 
-### vite
+### 使用 vite
 
 #### 安装
 
@@ -44,19 +44,9 @@ yarn create vite
 
 ```sql
 pnpm create vite
+# or
+pnpm create vite@latest
 ```
-
-
-
-#### 直接安装
-
-```sh
-npm init vite-app <project-name>
-cd <project-name>
-npm install 
-```
-
-
 
 #### 启动项目
 
@@ -549,7 +539,7 @@ function userDevouncedRef<T>(value: T, dalay = 200) {
 
 ## props & emit
 
-
+### 子组件
 
 ```vue
 <script setup="props, {emit}">
@@ -566,9 +556,84 @@ function userDevouncedRef<T>(value: T, dalay = 200) {
 </script>
 ```
 
+### 父组件
+
+```vue
+<template>
+  <child-components @method="handleAdd"></child-components>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import ChildComponents from './child.vue'
+const list = ref(['JavaScript', 'HTML', 'CSS'])
+// add 触发后的事件处理函数
+const handleAdd = value => {
+  list.value.push(value)
+}
+</script>
+```
+
+### v-model
+
+```vue
+<ChildComponent v-model:title="pageTitle" />
+// 就是下面这段代码的简写形势
+<ChildComponent :title="pageTitle" @update:title="pageTitle = $event" />
+```
+
+#### 子组件
+
+```vue
+<template>
+  <div>
+    <input v-model="value" placeholder="请输入"/>
+    <button @click="handleAdd" type="button">添加</button>
+  </div>
+</template>
+<script setup>
+import { ref, defineEmits, defineProps } from 'vue'
+const value = ref('')
+const props = defineProps({
+  list: {
+    type: Array,
+    default: () => [],
+  },
+})
+const emits = defineEmits(['update:list'])
+// 添加操作
+const handleAdd = () => {
+  const arr = props.list
+  arr.push(value.value)
+  emits('update:list', arr)
+  value.value = ''
+}
+</script>
+```
+
+#### 父组件
+
+```vue
+<template>
+  <!-- 父组件 -->
+  <ul >
+    <li  v-for="i in list" :key="i">{{ i }}</li>
+  </ul>
+  <!-- 子组件 -->
+  <child-components v-model:list="list"></child-components>
+</template>
+<script setup>
+import { ref } from 'vue'
+import ChildComponents from './child.vue'
+const list = ref(['JavaScript', 'HTML', 'CSS'])
+</script>
+```
 
 
-### 子组件默认不对外暴露数据，我们需要用到defineExpose({})
+
+## 父调用子
+
+子组件默认不对外暴露数据，我们需要用到defineExpose({})
 
 子组件对外暴露之后，父组件才能调用
 
@@ -609,9 +674,144 @@ setup() {
 }
 ```
 
+# 路由传值
+
+可以使用`router.push`方法来传递参数给路由，这些参数可以是`query`或`params`类型。`query`参数会附加在URL后面，通常用于非敏感信息的传递；而`params`参数则包含在路由路径中，适合传递敏感信息或路由特定的参数
+
+## 参数传值
+
+### query
+
+```vue
+
+<template>
+ <button @click="navigateToUser">Navigate with Query</button>
+</template>
+ 
+<script setup>
+import { useRouter } from 'vue-router';
+ 
+const router = useRouter();
+ 
+function navigateToUser() {
+ router.push({
+    path: '/user',
+    query: { id: 123, name: 'John Doe' }
+ });
+}
+
+```
+
+### params
+
+```vue
+<template>
+ <button @click="navigateToUserParam">Navigate with Params</button>
+</template>
+ 
+<script setup>
+import { useRouter } from 'vue-router';
+ 
+const router = useRouter();
+ 
+function navigateToUserParam() {
+ router.push({
+    name: 'User',
+    params: { id: 123 }
+ });
+}
+</script>
+```
+
+### 接收路由参数
+
+```vue
+<template>
+ <p>User ID: {{ $route.query.id }}</p>
+ <p>User Name: {{ $route.query.name }}</p>
+ <!-- 或者 -->
+ <p>User ID: {{ $route.params.id }}</p>
+</template>
+ 
+<script setup>
+import { useRoute } from 'vue-router';
+ 
+const route = useRoute();
+console.log(route) // 包含query & params的参数
+</script>
+```
+
+## 路由组件方式传值
+
+### 1. 配置路由
+
+```js
+// router/index.js
+import { createRouter, createWebHistory } from 'vue-router';
+import User from '../views/User.vue';
+ 
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/user/:id',
+      component: User,
+    },
+  ],
+});
+ 
+export default router;
+```
+
+### 2. 组件使用
+
+```vue
+
+<!-- views/User.vue -->
+<template>
+  <div>
+    <h1>User Information</h1>
+    <p>User ID: {{ userId }}</p>
+  </div>
+</template>
+ 
+<script setup>
+import { useRoute } from 'vue-router';
+ 
+const route = useRoute();
+const userId = route.params.id;
+</script>
+```
+
+### 3. 导航到动态路由
+
+```vue
+<!-- components/SomeComponent.vue -->
+<template>
+  <button @click="goToUser">Go to User</button>
+</template>
+ 
+<script setup>
+import { useRouter } from 'vue-router';
+ 
+const router = useRouter();
+ 
+function goToUser() {
+  router.push({ path: '/user/123' });
+}
+</script>
+
+// or 
+
+<!-- components/SomeComponent.vue -->
+<template>
+  <router-link :to="{ path: '/user/123' }">Go to User</router-link>
+</template>
+```
 
 
-## 自定义指令
+
+# 自定义指令
 
 如果是在`setup`定义组件内的指令，有一个语法糖可以使用：
 
@@ -681,7 +881,7 @@ const vCopy = {
 
 
 
-## 响应式数据的判断
+# 响应式数据的判断
 
 - isRef: 检查一个值是否为一个 ref 对象
 - isReactive: 检查一个对象是否是由 `reactive` 创建的响应式代理
@@ -690,7 +890,7 @@ const vCopy = {
 
 
 
-## 手写组合 API 
+# 手写组合 API 
 
 ```ts
 const reactiveHandler = {
@@ -789,7 +989,7 @@ function ref(target) {
 
 # Pinia
 
-### 安装
+## 安装
 
 ```sh
 yarn add pinia
@@ -797,7 +997,7 @@ yarn add pinia
 npm install pinia
 ```
 
-### 项目导入 pinia 
+## 项目导入 pinia 
 
 ```sh
 import { createPinia } from 'pinia'
@@ -807,9 +1007,9 @@ createApp(App).use(router).use(createPinia()).mount('#app')
 
 
 
-### stores/counter.js
+## stores/counter.js
 
-第一种
+#### 第一种
 
 ```ts
 import { defineStore } from 'pinia'
@@ -833,7 +1033,7 @@ export const useCounterStore = defineStore('counter', {
 })
 ```
 
-第二种
+#### 第二种
 
 ```js
 import { defineStore } from 'pinia'
