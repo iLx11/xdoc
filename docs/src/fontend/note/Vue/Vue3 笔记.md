@@ -629,6 +629,58 @@ const list = ref(['JavaScript', 'HTML', 'CSS'])
 </script>
 ```
 
+#### 使用 v-model 传递对象
+
+```vue
+<script setup>
+import { reactive, watch } from 'vue'
+
+// 默认配置
+const defaultConfig = {
+  switchValue: 0,
+  switchText: 'text',
+  switchDesc: 'desc',
+}
+
+// 默认样式
+const defaultPattern = {
+  textMargin: '20px',
+  boxMargin: '20px',
+}
+
+const props = defineProps({
+  config: {
+    type: Object,
+    default: () => ({}),
+  },
+  pattern: {
+    type: Object,
+    default: () => ({}),
+  },
+})
+
+const emit = defineEmits(['update:config'])
+
+/********************************************************************************
+ * @brief: 配置副本
+ ********************************************************************************/
+const switchConfig = reactive({ ...defaultConfig, ...props.config })
+
+watch(
+  switchConfig,
+  () => {
+    emit('update:config', { ...switchConfig })
+  },
+  { deep: true }
+)
+    
+/********************************************************************************
+ * @brief: 样式副本
+ ********************************************************************************/
+const switchPattern = reactive({ ...defaultPattern, ...props.pattern })
+</script>
+```
+
 
 
 ## 父调用子

@@ -7,13 +7,11 @@ export default defineConfig({
   description: 'note and article',
   srcDir: './src',
   base: '/xdoc/',
-  head: [
-    ['link', {rel: 'icon', href: '/icon.ico'}]
-  ],
+  head: [['link', { rel: 'icon', href: '/icon.ico' }]],
   themeConfig: {
     outline: {
       level: [2, 4],
-      label: '标题索引'
+      label: '标题索引',
     },
     nav: [
       { text: 'Home', link: '/' },
@@ -91,7 +89,7 @@ export default defineConfig({
         btnPlaceholder: '搜索',
         placeholder: '搜索文档',
         emptyText: '空空如也',
-        heading: '共: {{searchResult}} 条结果'
+        heading: '共: {{searchResult}} 条结果',
       }),
     ],
   },
