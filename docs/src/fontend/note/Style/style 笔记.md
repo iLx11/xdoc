@@ -138,8 +138,182 @@ transform-origin: left top;
 ### 元素挖圆孔
 
 ```css
- background-image: radial-gradient(circle at 10px -5px, transparent 12px, #fff 13px, #fff 20px);
+background-image: radial-gradient(
+    circle at 10px -5px,
+    transparent 12px,
+    #fff 13px,
+    #fff 20px
+ );
 ```
+
+#### 透出下方内容的动画
+
+```css
+@keyframes scale-animate {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(10);
+  }
+}
+```
+
+
+
+### 内凹平滑圆角
+
+```css
+.box {
+    width: 200px;
+    height: 100px;
+    background: rgba(255, 255, 255, 1);
+    --r: 5vw;
+    --s: 12vw;
+    --a: 24deg;
+
+    --_m: 0 / calc(2 * var(--r)) var(--r) no-repeat
+      radial-gradient(50% 100% at bottom, #000 calc(100% - 1px), #0000);
+    --_d: (var(--s) + var(--r)) * cos(var(--a));
+    mask: calc(50% + var(--_d)) var(--_m), calc(50% - var(--_d)) var(--_m),
+      radial-gradient(
+          var(--s) at 50% calc(-1 * sin(var(--a)) * var(--s)),
+          #0000 100%,
+          #000 calc(100% + 1px)
+        )
+        0 calc(var(--r) * (1 - sin(var(--a)))),
+      linear-gradient(
+        90deg,
+        #000 calc(50% - var(--_d)),
+        #0000 0 calc(50% + var(--_d)),
+        #000 0
+      );
+    mask-repeat: no-repeat;
+}
+```
+
+### 字体边框颜色动画
+
+```vue
+<template>
+<svg viewBox="0 0 600 300">
+  <!-- Symbol-->
+  <symbol id="s-text">
+    <text text-anchor="middle" x="50%" y="50%" dy=".35em">替换文本</text>
+  </symbol>
+  <!-- Duplicate symbols-->
+  <use class="text" xlink:href="#s-text"></use>
+  <use class="text" xlink:href="#s-text"></use>
+  <use class="text" xlink:href="#s-text"></use>
+  <use class="text" xlink:href="#s-text"></use>
+  <use class="text" xlink:href="#s-text"></use>
+</svg>
+</template>
+<style lang="scss">
+$colors: #F2385A, #F5A503, #E9F1DF, #56D9CD, #3AA1BF;
+$max: length($colors);
+$dash: 70;
+$dash-gap: 10;
+$dash-space: $dash * ($max - 1) + $dash-gap * $max;
+$time: 6s;
+$time-step: $time/$max;
+
+/* Main styles */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
+
+.text {
+  fill: none;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-dasharray: $dash $dash-space;
+  stroke-dashoffset: 0;
+  -webkit-animation: stroke $time infinite linear;
+  animation: stroke $time infinite linear;
+  
+  @for $item from 1 through $max {
+    &:nth-child(#{$max}n + #{$item}) {
+      $color: nth($colors, $item);
+      stroke: $color;
+      -webkit-animation-delay: -($time-step * $item);
+      animation-delay: -($time-step * $item);
+    }
+  }
+}
+
+@-webkit-keyframes stroke {
+  100% {
+    stroke-dashoffset: -($dash + $dash-gap) * $max;
+  }
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: -($dash + $dash-gap) * $max;
+  }
+}
+</style>
+```
+
+## animation
+
+### `animation` 属性语法：
+
+```css
+animation: [animation-name] [animation-duration] [animation-timing-function] [animation-delay] [animation-iteration-count] [animation-direction] [animation-fill-mode] [animation-play-state];
+```
+
+**`animation-name`**
+
+- 定义动画的名称，对应使用 `@keyframes` 定义的动画。
+- 默认值：`none`。
+
+**`animation-duration`**
+
+- 动画持续时间。
+- 单位：`s`（秒）或 `ms`（毫秒）。
+- 默认值：`0s`（动画没有效果）。
+
+**`animation-timing-function`**
+
+- 动画的时间函数，定义动画的速度曲线。
+- 常见值：`ease`（默认）、`linear`、`ease-in`、`ease-out`、`ease-in-out` 或自定义的 `cubic-bezier()` 函数。
+
+**`animation-delay`**
+
+- 动画开始之前的延迟时间。
+- 单位：`s` 或 `ms`。
+- 默认值：`0s`。
+
+**`animation-iteration-count`**
+
+- 动画的播放次数。
+- 常见值：数字（如 `1`, `2`）或 `infinite`（无限次）。
+- 默认值：`1`。
+
+**`animation-direction`**
+
+- 动画方向。
+- 值：
+  - `normal`（默认）：动画按正常方向播放。
+  - `reverse`：动画反向播放。
+  - `alternate`：动画交替正反方向播放。
+  - `alternate-reverse`：动画交替反正方向播放。
+
+**`animation-fill-mode`**
+
+- 动画在开始前和结束后如何应用样式。
+- 值：
+  - `none`（默认）：不应用样式。
+  - `forwards`：动画结束后保持结束状态。
+  - `backwards`：动画开始前应用起始状态。
+  - `both`：同时应用 `forwards` 和 `backwards`。
+
+**`animation-play-state`**
+
+- 动画的播放状态。
+- 值：
+  - `running`（默认）：动画正在播放。
+  - `paused`：动画暂停。
 
 
 

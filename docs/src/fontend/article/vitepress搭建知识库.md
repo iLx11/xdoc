@@ -459,7 +459,7 @@ export default {
   data () {
     return {
       msg: 'Removed' // [!code --]
-      msg: 'Added' // [!code s
+      msg: 'Added' // [!code ++]
     }
   }
 }

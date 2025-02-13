@@ -271,31 +271,6 @@ openocd -f interface/stlink.cfg -f target/stm32f1x.cfg -c "program build/<工程
         "kind": "build",
         "isDefault": true
       }
-    },
-    {
-      "label": "clean",
-      "type": "shell",
-      "command": "make",
-      "args": [
-        "clean"
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "shared",
-        "showReuseMessage": false,
-        "clear": false
-      }
-    },
-    {
-      "label": "rebuild",
-      "type": "shell",
-      "dependsOrder": "sequence",
-      "dependsOn": [
-        "clean",
-        "build"
-      ]
     }
   ]
 }
