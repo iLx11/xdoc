@@ -1,0 +1,3 @@
+[submodule "docs/src/other/xComp"]
+	path = docs/src/other/xComp
+	url = git@github.com:iLx11/xComp.git
