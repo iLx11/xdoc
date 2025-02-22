@@ -8,6 +8,7 @@ export default defineConfig({
   srcDir: './src',
   base: '/xdoc/',
   head: [['link', { rel: 'icon', href: '/icon.ico' }]],
+  
   themeConfig: {
     outline: {
       level: [2, 4],
@@ -84,6 +85,13 @@ export default defineConfig({
     },
   },
   vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@use "./docs/public/styles/global.scss" as global;',
+        },
+      },
+    },
     plugins: [
       pagefindPlugin({
         btnPlaceholder: '搜索',

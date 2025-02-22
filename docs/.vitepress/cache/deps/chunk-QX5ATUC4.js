@@ -1,4 +1,4 @@
-// node_modules/.pnpm/vitepress@1.4.1_@algolia+client-search@4.24.0_postcss@8.4.47_search-insights@2.17.2/node_modules/vitepress/lib/vue-demi.mjs
+// node_modules/.pnpm/vitepress@1.4.1_@algolia+client-search@4.24.0_postcss@8.4.47_sass@1.85.0_search-insights@2.17.2/node_modules/vitepress/lib/vue-demi.mjs
 var isVue2 = false;
 var isVue3 = true;
 var Vue2 = void 0;
@@ -38,4 +38,4 @@ vitepress/lib/vue-demi.mjs:
    * @license MIT
    *)
 */
-//# sourceMappingURL=chunk-GCAV6GNE.js.map
+//# sourceMappingURL=chunk-QX5ATUC4.js.map
