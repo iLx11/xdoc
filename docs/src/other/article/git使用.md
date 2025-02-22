@@ -207,3 +207,72 @@ git push <remote-name> master
 ```
 
 同步多个远程仓库
+
+# 添加子模块
+
+如果已经在项目中 clone 了某个仓库，需要删除后添加子模，具体流程是
+
+### 1. 删除已存在的目录
+
+首先，删除目标路径 `<xx/path>` 中的内容：
+
+bash复制
+
+```bash
+rm -rf <xx/path>
+```
+
+### 2. 清除 Git 索引中的记录
+
+使用以下命令从 Git 索引中移除该路径的记录：
+
+bash复制
+
+```bash
+git rm --cached <xx/path>
+```
+
+如果路径是目录，可以加上 `-r` 参数：
+
+bash复制
+
+```bash
+git rm -r --cached <xx/path>
+```
+
+### 3. 检查并更新配置文件
+
+确保 `.gitmodules` 文件中没有重复的子模块配置。如果有，手动删除相关的条目。
+
+### 4. 提交更改
+
+将上述更改提交到 Git：
+
+bash复制
+
+```bash
+git commit -m "Remove existing submodule configuration for xComp"
+```
+
+### 5. 重新添加子模块
+
+现在可以重新添加子模块：
+
+bash复制
+
+```bash
+git submodule add git@github.com:iLx11/xComp.git <xx/path>
+```
+
+### 6. 初始化并更新子模块
+
+最后，初始化并更新子模块：
+
+bash复制
+
+```bash
+git submodule init
+git submodule update
+```
+
+通过以上步骤，你应该能够成功添加子模块。如果问题仍然存在，请检查 `.gitmodules` 文件和 `.git/config` 文件，确保没有残留的子模块配置
