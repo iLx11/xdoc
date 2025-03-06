@@ -518,3 +518,86 @@ $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 | $\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t}  = \vec{\mathbf{0}}$                                                          | curl of $\vec{\mathbf{E}}$ is proportional to the rate of change of $\vec{\mathbf{B}}$ |
 | $\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} = \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} = 4 \pi \rho$ | _wha?_                                                                                 |
 ```
+
+# vitepress github 自动打包上传子模块仓库
+
+### 1. 确保子模块正确初始化
+
+在你的 VitePress 项目中，如果使用了 Git 子模块，需要确保子模块正确初始化并更新：
+
+bash复制
+
+```bash
+git submodule init
+git submodule update
+```
+
+这会确保子模块的内容被正确拉取。
+
+### 2. 配置 GitHub Actions
+
+在 `.github/workflows` 目录下，创建或更新 `deploy.yml` 文件，以支持子模块的部署。以下是一个示例配置：
+
+yaml复制
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # 触发部署的分支
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive  # 确保子模块也被拉取 // [!code highlight]
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # 根据你的项目需求选择 Node.js 版本
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd docs/.vitepress/dist
+          git init
+          git add .
+          git commit -m "Deploy to GitHub Pages"
+          git push -f https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git gh-pages
+```
+
+这个配置文件会：
+
+1. 检出代码并拉取子模块。
+2. 安装依赖并构建项目。
+3. 将构建后的静态文件推送到 `gh-pages` 分支。
+
+### 3. 配置子模块路径
+
+确保子模块的路径在你的 VitePress 配置中正确引用。例如，如果子模块包含主题或其他资源，确保路径正确
+
+### 4. 推送代码到主分支
+
+在本地开发完成后，将代码推送到主分支：
+
+GitHub Actions 会自动触发并执行部署
+
+### 注意事项
+
+- 确保子模块的仓库是公开的，或者你有权限访问
+- 如果子模块包含敏感信息，请确保它们不会被意外泄露
+- 如果需要更复杂的部署逻辑（例如多环境部署），可以扩展 `deploy.yml` 文件
