@@ -11,7 +11,7 @@ export default defineConfig({
   
   themeConfig: {
     outline: {
-      level: [2, 4],
+      level: [1, 4],
       label: '标题索引',
     },
     nav: [
