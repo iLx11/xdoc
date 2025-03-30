@@ -10,7 +10,7 @@ https://cheatography.com/milefashi/cheat-sheets/git-cheatssheet/
 
 https://cheatography.com/itsellej/cheat-sheets/git-commands/
 
-## 生成 SSH key 步骤
+# 生成 SSH key 步骤
 
 GitHub 官网上注册一个账号，然后桌面右键选择 Git Bash Here，进行账号配置，命
 
@@ -88,42 +88,53 @@ git remote add origin git@github.com:iLx11/git-test.git
 git push -u origin master
 ```
 
-## 测试一个新功能
+# 测试一个新功能(分支)
+
+## 添加并开发分支
 
 ```bash
 # 添加分支，当然也可以直接在主分支里写，如果是自己的项目
-git branch main
+git branch [new branch name]
 
 # 切换到此分支
-git checkout/switch main
+git checkout/switch [new branch name]
+
+# 可以简化为一条命令，表示创建新分支并切换到该分支
+git checkout -b [new branch name]
 
 # 之后与本地三步走的流程一致
 ```
 
+**新更改的内容都将与主分支的内容分隔开，包括本地三步走的流程**
+
 将新分支推送到远程仓库
 
 ```bash
-git push <remote-name>  main
+git push <remote-name> [new branch name]
 ```
 
 在 github 上也会出现一个新的分支，与主分支完全分开
 
-可以用合起来的命令完成创建并转到分支
+## 合并分支
 
-```bash
-git checkout -b main
-```
-
-合并其他分支到主分支，但是当前分支一点要在主分支上
+**合并其他分支到主分支，但是当前分支一点要在主分支上**
 
 ```bash
 git checkout master
 
-# master 分支中
-git merge main
+# (master) 分支中
+git merge [new branch name]
 ```
 
-## 版本回退
+## 删除远程版本的分支
+
+```git
+git push <remote-name> --delete [new branch name]
+```
+
+
+
+# 版本回退
 
 ```bash
 # 看所有提交的版本
@@ -139,7 +150,7 @@ git reset --mixed
 git reset --hard (谨慎）
 ```
 
-## 参考、学习或二次开发 github 上心仪的项目
+# 参考、学习或二次开发 github 上心仪的项目
 
 在项目的页面找到 code 按钮，点击后可以看见最上面的 clone，然后复制下面的链接，https 或 ssh 都可以
 
@@ -150,7 +161,7 @@ git clone <上面复制的网址>
 # 然后就可以自由学习了
 ```
 
-## 远程仓库覆盖本地
+# 远程仓库覆盖本地
 
 **放弃本地更改：**
 如果你有未提交的更改或提交，但不需要保留它们，可以用以下命令将本地更改还原到上次提交的状态
@@ -172,7 +183,7 @@ git fetch --all
 git reset --hard origin/master
 ```
 
-## 多端开发同一项目
+# 多端开发同一项目
 
 首先在 github 上需要添加不同端 ssh 以实现在不同端开发并提交代码
 
@@ -190,7 +201,7 @@ git log
 git reset --hard xxxxxx
 ```
 
-## 一个项目同步到不同的远程仓库
+# 一个项目同步到不同的远程仓库
 
 这个意思是把一个项目放到多个不同的远程仓库，像除了 github 之外的 gitee， coding， 阿里云之类的代码管理平台
 
@@ -212,7 +223,7 @@ git push <remote-name> master
 
 如果已经在项目中 clone 了某个仓库，需要删除后添加子模，具体流程是
 
-### 1. 删除已存在的目录
+## 1. 删除已存在的目录
 
 首先，删除目标路径 `<xx/path>` 中的内容：
 
@@ -222,7 +233,7 @@ bash复制
 rm -rf <xx/path>
 ```
 
-### 2. 清除 Git 索引中的记录
+## 2. 清除 Git 索引中的记录
 
 使用以下命令从 Git 索引中移除该路径的记录：
 
@@ -240,11 +251,11 @@ bash复制
 git rm -r --cached <xx/path>
 ```
 
-### 3. 检查并更新配置文件
+## 3. 检查并更新配置文件
 
 确保 `.gitmodules` 文件中没有重复的子模块配置。如果有，手动删除相关的条目。
 
-### 4. 提交更改
+## 4. 提交更改
 
 将上述更改提交到 Git：
 
@@ -254,7 +265,7 @@ bash复制
 git commit -m "Remove existing submodule configuration for xComp"
 ```
 
-### 5. 重新添加子模块
+## 5. 重新添加子模块
 
 现在可以重新添加子模块：
 
@@ -264,7 +275,7 @@ bash复制
 git submodule add git@github.com:iLx11/xComp.git <xx/path>
 ```
 
-### 6. 初始化并更新子模块
+## 6. 初始化并更新子模块
 
 最后，初始化并更新子模块：
 
