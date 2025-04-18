@@ -6,6 +6,8 @@ hero:
   name: "xdoc"
   text: "note & article"
   tagline: 笔记 & 文章
+  image: {light: dog.png, dark: cat.png, alt: xdoc}
+    
   actions:
     - theme: brand
       text: 开始阅读
@@ -25,10 +27,13 @@ hero:
 
 features:
   - title: 笔记
+    icon: 🍚
     details: 关于学习某一方面所记录的要点，防止忘记也能快速
   - title: 文章
+    icon: 🍜
     details: 关于一些配置与某种功能的实现步骤
   - title: 其他
+    icon: 🍫
     details: 有问题或是比较片面的地方还请担待了
 ---
 

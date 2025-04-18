@@ -5,10 +5,30 @@ import { pagefindPlugin } from 'vitepress-plugin-pagefind'
 export default defineConfig({
   title: 'iLx1',
   description: 'note and article',
-  srcDir: './src',
+  srcDir: 'src',
   base: '/xdoc/',
-  head: [['link', { rel: 'icon', href: '/icon.ico' }]],
-  
+  head: [['link', { rel: 'icon', href: 'icon.ico' },]],
+  transformHead({ assets }) {
+    // 相应地调整正则表达式以匹配字体
+    const myFontFile = assets.find(file =>
+      /code\.[\w-]+\.woff2/.test(file)
+    )
+    if (myFontFile) {
+      return [
+        [
+          'link',
+          {
+            rel: 'preload',
+            href: myFontFile,
+            as: 'font',
+            type: 'font/woff2',
+            crossorigin: '',
+          },
+        ],
+      ]
+    }
+  },
+
   themeConfig: {
     outline: {
       level: [1, 4],

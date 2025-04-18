@@ -1,0 +1,9 @@
+/* .vitepress/theme/my-fonts.css */
+@font-face {
+  font-family: 'code';
+  src: url('../../public/font/code.woff2') format('truetype');
+}
+
+:root {
+  --vp-font-family-mono: 'code'
+}
