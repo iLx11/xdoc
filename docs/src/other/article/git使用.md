@@ -219,71 +219,127 @@ git push <remote-name> master
 
 同步多个远程仓库
 
-# 添加子模块
+# 子模块
 
-如果已经在项目中 clone 了某个仓库，需要删除后添加子模，具体流程是
+Git 子模块是管理多个相关仓库的实用工具，但其操作需要细致处理。以下是常用操作的总结和补充说明：
 
-## 1. 删除已存在的目录
+---
 
-首先，删除目标路径 `<xx/path>` 中的内容：
-
-bash复制
-
+### **添加子模块**
 ```bash
-rm -rf <xx/path>
+git submodule add <仓库URL> <子模块路径>
+```
+- 将子模块添加到父仓库，生成 `.gitmodules` 文件记录子模块信息。
+- **注意**：添加后需提交父仓库的变更（`.gitmodules` 和子模块路径）。
+
+---
+
+### **克隆包含子模块的项目**
+- **首次克隆**：
+  
+  ```bash
+  git clone <父仓库URL>
+  cd <父仓库目录>
+  git submodule update --init --recursive
+  ```
+- **克隆时递归初始化子模块**：
+  
+  ```bash
+  git clone --recurse-submodules <父仓库URL>
+  ```
+
+---
+
+### **更新子模块到最新提交**
+```bash
+git submodule update --remote
+```
+- 默认拉取子模块远程仓库的 **默认分支**（如 `master`）。
+- 若需指定分支，需在 `.gitmodules` 中添加 `branch = <分支名>`，再运行上述命令。
+
+---
+
+### **切换子模块的分支**
+```bash
+cd <子模块路径>
+git checkout <分支名>
+cd ..
+git add <子模块路径>
+git commit -m "切换子模块分支"
 ```
 
-## 2. 清除 Git 索引中的记录
+---
 
-使用以下命令从 Git 索引中移除该路径的记录：
-
-bash复制
-
+### **查看子模块状态**
 ```bash
-git rm --cached <xx/path>
+git submodule status
+```
+- 显示各子模块的当前提交哈希和路径。
+
+---
+
+### **拉取父仓库及子模块更新**
+```bash
+git pull
+git submodule update --init --recursive
+```
+- 或拉取时自动递归更新：
+  ```bash
+  git pull --recurse-submodules
+  ```
+
+---
+
+### **修改子模块并提交**
+```bash
+cd <子模块路径>
+# 修改代码后提交
+git add .
+git commit -m "子模块修改"
+git push
+# 返回父仓库提交子模块引用变更
+cd ..
+git add <子模块路径>
+git commit -m "更新子模块引用"
+git push
 ```
 
-如果路径是目录，可以加上 `-r` 参数：
+---
 
-bash复制
+### **删除子模块**
+1. **卸载子模块**：
+   ```bash
+   git submodule deinit <子模块路径>
+   ```
+2. **从索引中移除**：
+   ```bash
+   git rm <子模块路径>
+   ```
+3. **删除残留配置**：
+   
+   ```bash
+   rm -rf .git/modules/<子模块名称>
+   ```
+4. **提交变更**：
+   ```bash
+   git commit -m "删除子模块"
+   ```
 
-```bash
-git rm -r --cached <xx/path>
-```
+---
 
-## 3. 检查并更新配置文件
+### **其他常见操作**
+- **更改子模块 URL**：
+  
+  1. 修改 `.gitmodules` 中的 URL。
+  2. 同步变更：`git submodule sync`
+- **查看子模块远程仓库**：
+  
+  ```bash
+  cd <子模块路径> && git remote -v
+  ```
+- **递归操作所有子模块**：
+  
+  ```bash
+  git submodule foreach 'git checkout main'
+  ```
 
-确保 `.gitmodules` 文件中没有重复的子模块配置。如果有，手动删除相关的条目。
-
-## 4. 提交更改
-
-将上述更改提交到 Git：
-
-bash复制
-
-```bash
-git commit -m "Remove existing submodule configuration for xComp"
-```
-
-## 5. 重新添加子模块
-
-现在可以重新添加子模块：
-
-bash复制
-
-```bash
-git submodule add git@github.com:iLx11/xComp.git <xx/path>
-```
-
-## 6. 初始化并更新子模块
-
-最后，初始化并更新子模块：
-
-bash复制
-
-```bash
-git submodule init
-git submodule update
-```
-
-通过以上步骤，你应该能够成功添加子模块。如果问题仍然存在，请检查 `.gitmodules` 文件和 `.git/config` 文件，确保没有残留的子模块配置
