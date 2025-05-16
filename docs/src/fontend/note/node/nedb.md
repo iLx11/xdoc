@@ -17,15 +17,15 @@ const db = new Datastore({ filename: 'path/to/database.db', autoload: true });
 
 （2） options 参数说明
 
-- filename（可选）：数据持久化的文件路径。如果留空，数据库将被自动视为内存数据库。注意路径不能以~结尾，因为这是NeDB用于执行安全写入的临时文件的标志。
-- inMemoryOnly（可选，默认为false）：指定是否为内存数据库。
-- timestampData（可选，默认为false）：是否为所有文档添加插入和最后更新的时间戳字段，分别是 createdAt 和 updatedAt。用户指定的值会覆盖自动生成的值，通常用于测试。
-- autoload（可选，默认为false）：如果使用此选项，数据库将在创建时自动从数据文件加载（无需调用loadDatabase）。在加载完成之前发出的任何命令都会被缓冲，将在加载完成后执行。
-- onload（可选）：如果使用自动加载，这是在loadDatabase之后调用的处理程序。它接受一个错误参数。如果使用自动加载而没有指定此处理程序，如果在加载期间发生错误，将抛出一个错误。
-- afterSerialization（可选）：用于在序列化后、写入磁盘之前转换数据的钩子。可以用于在写入数据库到磁盘之前加密数据。此函数以字符串作为参数（NeDB数据文件的一行），并输出转换后的字符串，绝对不能包含\n字符，否则会丢失数据。
-- beforeDeserialization（可选）：afterSerialization的反向操作。确保同时包含两者，否则可能导致数据丢失。出于相同的原因，确保两个函数是彼此的反函数。NeDB会检查是否声明了其中一个而没有另一个，并通过对各种长度的随机字符串进行测试，检查它们是否是彼此的反函数来防止数据丢失。此外，如果检测到数据损坏过多，NeDB将拒绝启动，因为这可能意味着您没有在使用序列化钩子之前使用对应的反序列化钩子（请参见下文）。
-- corruptAlertThreshold（可选）：介于0和1之间，默认为10%。如果数据文件损坏的百分比超过此阈值，NeDB将拒绝启动。0表示不容忍任何损坏，1表示不关心。
-- compareStrings（可选）：函数compareStrings(a, b)比较字符串a和b，返回-1、0或1。如果指定了此函数，它将覆盖默认的字符串比较，后者对于非美国字符（特别是重音字母）不太适用。本机的localCompare在大多数情况下都是正确的选择。
+- `filename`（可选）：数据持久化的文件路径。如果留空，数据库将被自动视为内存数据库。注意路径不能以~结尾，因为这是NeDB用于执行安全写入的临时文件的标志。
+- `inMemoryOnly`（可选，默认为false）：指定是否为内存数据库。
+- `timestampData`（可选，默认为false）：是否为所有文档添加插入和最后更新的时间戳字段，分别是 createdAt 和 updatedAt。用户指定的值会覆盖自动生成的值，通常用于测试。
+- `autoload`（可选，默认为false）：如果使用此选项，数据库将在创建时自动从数据文件加载（无需调用loadDatabase）。在加载完成之前发出的任何命令都会被缓冲，将在加载完成后执行。
+- `onload`（可选）：如果使用自动加载，这是在loadDatabase之后调用的处理程序。它接受一个错误参数。如果使用自动加载而没有指定此处理程序，如果在加载期间发生错误，将抛出一个错误。
+- `afterSerialization`（可选）：用于在序列化后、写入磁盘之前转换数据的钩子。可以用于在写入数据库到磁盘之前加密数据。此函数以字符串作为参数（NeDB数据文件的一行），并输出转换后的字符串，绝对不能包含\n字符，否则会丢失数据。
+- `beforeDeserialization`（可选）：afterSerialization的反向操作。确保同时包含两者，否则可能导致数据丢失。出于相同的原因，确保两个函数是彼此的反函数。NeDB会检查是否声明了其中一个而没有另一个，并通过对各种长度的随机字符串进行测试，检查它们是否是彼此的反函数来防止数据丢失。此外，如果检测到数据损坏过多，NeDB将拒绝启动，因为这可能意味着您没有在使用序列化钩子之前使用对应的反序列化钩子（请参见下文）。
+- `corruptAlertThreshold`（可选）：介于0和1之间，默认为10%。如果数据文件损坏的百分比超过此阈值，NeDB将拒绝启动。0表示不容忍任何损坏，1表示不关心。
+- `compareStrings`（可选）：函数compareStrings(a, b)比较字符串a和b，返回-1、0或1。如果指定了此函数，它将覆盖默认的字符串比较，后者对于非美国字符（特别是重音字母）不太适用。本机的localCompare在大多数情况下都是正确的选择。
 
 ### 3. 插入数据
 
@@ -214,11 +214,11 @@ db.count({}, function (err, count) {
 
 ### 8. 更新
 
-db.update(query, update, options, callback)
+`db.update(query, update, options, callback)`
 
 （1）参数说明
 
-update
+`update`
 
 指定文档应如何修改。它可以是一个新文档，也可以是一组修饰符，但不能同时使用。
 
@@ -227,35 +227,35 @@ update
 
 **可用的字段修饰符有**
 
-$set（更改字段的值）
+`$set`（更改字段的值）
 
-$unset（删除字段）
+`$unset`（删除字段）
 
-$inc（递增字段的值）
+`$inc`（递增字段的值）
 
-$min/$max 仅在提供的值小于/大于当前值时更改字段的值。
+`$min/$max` 仅在提供的值小于/大于当前值时更改字段的值。
 
 **对于数组，有**
 
-$push
+`$push`
 
-$pop
+`$pop`
 
-$addToSet
+`$addToSet`
 
-$pull
+`$pull`
 
-$each
+`$each`
 
-$slice
+`$slice`
 
 **options**
 
 是一个具有两个可能参数的对象
 
-- multi（默认为 false）允许如果设置为 true，则修改多个文档
-- upsert（默认为 false）如果要根据更新规则插入新文档，如果查询不匹配任何内容。如果您的更新是一个没有修饰符的简单对象，则它是插入的文档。在其他情况下，查询将递归地去除所有运算符。
-- returnUpdatedDocs（默认为 false，不兼容 MongoDB），如果设置为 true 并且更新不是 upsert，则会返回由查询匹配并更新的文档数组。即使更新实际上没有修改它们，也会返回更新的文档。
+- `multi`（默认为 false）允许如果设置为 true，则修改多个文档
+- `upsert`（默认为 false）如果要根据更新规则插入新文档，如果查询不匹配任何内容。如果您的更新是一个没有修饰符的简单对象，则它是插入的文档。在其他情况下，查询将递归地去除所有运算符。
+- `returnUpdatedDocs`（默认为 false，不兼容 MongoDB），如果设置为 true 并且更新不是 upsert，则会返回由查询匹配并更新的文档数组。即使更新实际上没有修改它们，也会返回更新的文档。
 
 ```javascript
 // 使用与“查找文档”部分相同的示例集合
@@ -315,9 +315,9 @@ db.update({ planet: 'Pluto' }, { $inc: { distance: 38 } }, { upsert: true }, fun
 
 `db.remove(query, options, callback)` 将根据选项删除与查询匹配的所有文档：
 
-- query：与用于查找和更新的查询相同
-- options：目前只有一个选项：multi，如果设置为 true，允许删除多个文档。默认为 false
-- callback：可选，签名为：(err, numRemoved)
+- `query`：与用于查找和更新的查询相同
+- `options`：目前只有一个选项：multi，如果设置为 true，允许删除多个文档。默认为 false
+- `callback`：可选，签名为：(err, numRemoved)
 
 ```javascript
 // 使用与“查找文档”部分相同的示例集合
@@ -345,16 +345,16 @@ db.remove({}, { multi: true }, function (err, numRemoved) {
 
 ### 10. 索引
 
-使用 datastore.ensureIndex(options, cb) 创建索引。
+使用 `datastore.ensureIndex(options, cb)` 创建索引。
 
-ensureIndex 可以在需要时调用，即使已经插入了一些数据，但最好在应用程序启动时调用。
+`ensureIndex` 可以在需要时调用，即使已经插入了一些数据，但最好在应用程序启动时调用。
 
 **参数 options 选项包括：**
 
-- fieldName（必需）：要创建索引的字段的名称。使用点表示法在嵌套文档中索引字段。
-- unique（可选，默认为 false）：强制字段的唯一性。请注意，唯一索引将在尝试为未定义该字段的两个文档创建索引时引发错误。
-- sparse（可选，默认为 false）：不要为未定义该字段的文档创建索引。如果希望接受未定义该字段的多个文档，请与 “unique” 选项一起使用。
-- expireAfterSeconds（秒数，可选）：如果设置，创建的索引是一个 TTL（生存时间）索引，当系统日期变得大于索引字段上的日期加上 expireAfterSeconds 时，将自动删除文档。未指定索引字段或索引字段不是日期对象的文档将被忽略。
+- `fieldName`（必需）：要创建索引的字段的名称。使用点表示法在嵌套文档中索引字段。
+- `unique`（可选，默认为 false）：强制字段的唯一性。请注意，唯一索引将在尝试为未定义该字段的两个文档创建索引时引发错误。
+- `sparse`（可选，默认为 false）：不要为未定义该字段的文档创建索引。如果希望接受未定义该字段的多个文档，请与 “unique” 选项一起使用。
+- `expireAfterSeconds`（秒数，可选）：如果设置，创建的索引是一个 TTL（生存时间）索引，当系统日期变得大于索引字段上的日期加上 expireAfterSeconds 时，将自动删除文档。未指定索引字段或索引字段不是日期对象的文档将被忽略。
 
 **注意：_id 会自动带有唯一约束的索引，不需要调用 ensureIndex。 **
 
