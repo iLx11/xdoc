@@ -343,3 +343,40 @@ git push
   git submodule foreach 'git checkout main'
   ```
 
+# 要删除 Git 仓库中的所有标签
+
+### 1. **删除所有本地标签**
+
+要删除所有本地标签，可以使用以下命令：
+
+bash
+
+复制
+
+```bash
+git tag | xargs git tag -d
+```
+
+这个命令的工作原理如下：
+
+- `git tag`：列出所有本地标签。
+- `xargs`：将 `git tag` 的输出作为参数传递给 `git tag -d`，从而删除每个标签。
+
+### 2. **删除所有远程标签**
+
+要删除所有远程标签，可以使用以下命令：
+
+bash
+
+复制
+
+```bash
+git ls-remote --tags origin | awk '{print $2}' | sed 's/refs\/tags\///' | xargs git push origin --delete
+```
+
+这个命令的工作原理如下：
+
+- `git ls-remote --tags origin`：列出所有远程标签。
+- `awk '{print $2}'`：提取标签的名称。
+- `sed 's/refs\/tags\///'`：去除 `refs/tags/` 前缀。
+- `xargs git push origin --delete`：删除远程标签。
