@@ -31,7 +31,7 @@ fatfs_create_spiflash_image(
 
 ### 实现函数
 
-::: detials
+::: details
 
 esp_flash.c
 
