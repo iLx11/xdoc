@@ -787,7 +787,7 @@ idf_component_register(SRCS ${SOURCES} ${EXAMPLE_SOURCES} ${DEMO_SOURCES}
                    ${LVGL_ROOT_DIR}/examples ${LVGL_ROOT_DIR}/demos
       REQUIRES 
       	esp_timer
-        fatfs // [! code highlight]
+        fatfs // [!code highlight]
  )
 ```
 
