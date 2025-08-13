@@ -98,8 +98,75 @@ pnpm tauri android dev
 
 ## 打包项目
 
+### APK 签名
+
+#### 生成签名
+
+```bash
+keytool -genkey -alias infocard -keyalg RSA -keysize 2048 -validity 36500 -keystore infocard.jks -storetype JKS
+```
+
+![image-20250813142328880](https://picr.oss-cn-qingdao.aliyuncs.com/img/image-20250813142328880.png)
+
+在命令的同级目录中可以找到 `xxx.jks` 文件
+
+创建 `src-tauri/gen/android/keystore.properties` 文件
+
+文件内容如下：
+```
+storePassword=数据文件密码
+keyPassword=证书密码
+keyAlias=自定义的证书别名
+# 需要输入绝对路径
+storeFile=D:\\xx\\xxx自定义的数据文件名称.jks
+```
+
+然后修改 `src-tauri/gen/android/app/build.gradle.kts` 文件
+
+```
+import java.io.FileInputStream
+
+android {
+	...
+	signingConfigs { // [!code ++:13]
+        create("release") {
+        	val keystorePropertiesFile = rootProject.file("keystore.properties")
+            val keystoreProperties = Properties()
+            if (keystorePropertiesFile.exists()) {
+                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+            }
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = File(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
+    buildTypes {
+    ...
+    	getByName("release") {
+			signingConfig = signingConfigs.getByName("release") // [!code ++]
+			...
+		}
+	}
+}
+```
+
 打包为apk安装包：
 
-```undefined
+```bash
 pnpm tauri android build
 ```
+
+然后找到安装包目录，安装在手机上
+
+# 问题与解决
+
+### 如果报错 JDK 版本问题
+
+可以自己下载官方高版本的 java 后替换环境变量
+
+然后再次执行：
+```bash
+pnpm tauri android init
+```
+
