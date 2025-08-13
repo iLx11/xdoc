@@ -159,6 +159,16 @@ pnpm tauri android build
 
 然后找到安装包目录，安装在手机上
 
+# 调试项目
+
+- 如果用数据线连接了手机，则会自动安装软件并运行，前提是手机打开 USB 调试
+
+- 如果使用 Android studio 的模拟器，在前面配置好模拟器，则会自动打开运行
+
+然后在 Chrome 浏览器访问：`chrome://inspect/#devices`
+
+选择对应的设备，点击 `inspect`
+
 # 问题与解决
 
 ### 如果报错 JDK 版本问题
