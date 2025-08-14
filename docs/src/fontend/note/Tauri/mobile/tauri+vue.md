@@ -167,7 +167,7 @@ pnpm tauri android build
 
 然后在 Chrome 浏览器访问：`chrome://inspect/#devices`
 
-选择对应的设备，点击 `inspect`
+选择对应的设备，点击 `inspect` 即可打开 devtool 显示调试信息
 
 # 问题与解决
 
