@@ -542,16 +542,16 @@ function userDevouncedRef<T>(value: T, dalay = 200) {
 ### 子组件
 
 ```vue
-<script setup="props, {emit}">
-	const props = defineProps({
+<script setup>
+    const props = defineProps({
         msg: {
             type: Stirng,
             default: () => "default"
         }
     })
-    const msg = ref(props.msg)
     // emits
     const emits = defineEmits(['method'])
+    // 提交更改
     emits('method', params)
 </script>
 ```
@@ -560,7 +560,11 @@ function userDevouncedRef<T>(value: T, dalay = 200) {
 
 ```vue
 <template>
-  <child-components @method="handleAdd"></child-components>
+  <child-components
+    @method="handleAdd"
+    :msg="msg"
+  >
+  </child-components>
 </template>
 
 <script setup>
@@ -574,15 +578,37 @@ const handleAdd = value => {
 </script>
 ```
 
-### v-model
+### 使用 v-model 简化
+
+可以在子组件提交更改的值时，父组件方便且简单处理
+
+#### 父组件中定义
 
 ```vue
-<ChildComponent v-model:title="pageTitle" />
-// 就是下面这段代码的简写形势
-<ChildComponent :title="pageTitle" @update:title="pageTitle = $event" />
+<ChildComponent v-model:title="title" />
+// 就是下面这段代码的简写
+<ChildComponent :title="title" @update:title="title = $event" />
 ```
 
-#### 子组件
+#### 子组件中
+
+```vue
+<script setup>
+import { ref, defineEmits, defineProps } from 'vue'
+const value = ref('')
+const props = defineProps({
+  title: {
+    type: String,
+    default: () => '',
+  },
+})
+// 定义提交列表
+const emits = defineEmits(['update:title'])
+emits('update:title', "new value")
+</script>
+```
+
+#### 更改数组示例
 
 ```vue
 <template>
@@ -600,11 +626,13 @@ const props = defineProps({
     default: () => [],
   },
 })
+// 定义提交列表
 const emits = defineEmits(['update:list'])
 // 添加操作
 const handleAdd = () => {
   const arr = props.list
   arr.push(value.value)
+  // 提交列表更改后的值
   emits('update:list', arr)
   value.value = ''
 }
