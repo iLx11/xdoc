@@ -533,8 +533,6 @@ function userDevouncedRef<T>(value: T, dalay = 200) {
 
 
 
-
-
 # 组件间传值
 
 ## props & emit
@@ -753,6 +751,28 @@ setup() {
     }
 }
 ```
+
+# 动态加载组件
+
+切换组件加载
+
+```vue
+<script>
+// 动态配置组件
+const dynamicComponent = ref(null)
+
+dynamicComponent.value = defineAsyncComponent(
+    () => import('@/components/xxxxxxx')
+)
+</script>
+
+<component
+    :is="dynamicComponent"
+    v-if="dynamicComponent"
+/>
+```
+
+
 
 # 路由传值
 
@@ -1064,88 +1084,3 @@ function ref(target) {
   return result
 }
 ```
-
-
-
-# Pinia
-
-## 安装
-
-```sh
-yarn add pinia
-# 或者使用 npm
-npm install pinia
-```
-
-## 项目导入 pinia 
-
-```sh
-import { createPinia } from 'pinia'
-
-createApp(App).use(router).use(createPinia()).mount('#app')
-```
-
-
-
-## stores/counter.js
-
-#### 第一种
-
-```ts
-import { defineStore } from 'pinia'
-
-export const useCounterStore = defineStore('counter', {
-  state: () => {
-    return { count: 0 }
-  },
-  /* 
-   * 也可以定义为
-   * state: () => ({ count: 0 })
-  */  
-  getters: {
-    doubleCount: (state) => state.count * 2,
-  },
-  actions: {
-    increment() {
-      this.count++
-    },
-  },
-})
-```
-
-#### 第二种
-
-```js
-import { defineStore } from 'pinia'
-
-export const useCounterStore = defineStore('counter', () => {
-    const count = ref(0)
-    const doubleCount = computed(() => count.value * 2)
-  	const increment = () => {
-    	count.value++
-  	}
-  	return { count, name, doubleCount, increment }
-})
-```
-
-
-
-## state的五种方式修改值
-
-```ts
-state的五种方式修改值
-// 1.直接修改值
-Test.current=2
-// 2.通过$patch修改,支持单个或多个属性修改
-Test.$patch({current:33})
-// 3.$patch工厂函数方式
-Test.$patch((state) => {
-  state.current = 99;
-  state.name = '范迪塞尔'
-})
-// 4.$state 缺点是必须修改整个对象
-Test.$state = { current: 88, name: '123' }
-// 5.action
-Test.setCurrent()
-```
-
