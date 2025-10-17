@@ -42,7 +42,7 @@ https://xxxxxx/?i=https://xxxx
 以目前我的名片数据来看：
 
 ```bash
-https://lxw-resume.rth1.xyz/?i=https://lxw-resume.rth1.xyz/aaa.json
+https://info-card.rth1.xyz/?i=https://info-card.rth1.xyz/aaa.json
 ```
 
 `/?=` 前面是解析站点链接，`/?=`  后面是解析数据链接
@@ -55,7 +55,7 @@ https://host.retiehe.com/
 注册登录或完成其他认证后就可以免费使用了，目前可以使用我已经部署的解析站点，然后自己在其他地方处理一下能通过 `get`  请求获取 `json`  数据的地方，类似云服务器的函数功能
 
 ```bash
-https://lxw-resume.rth1.xyz
+https://info-card.rth1.xyz
 ```
 
 或者自己部署一下静态的资源，我的代码也已经开源了，可以将 `静态网页部署文件`文件夹里面的所有内容按照原本的结构上传到上面的网页托管网站，就是 `index.html` 一定要在根目录里，同时创建文件夹后，依次上传文件，开源地址：
@@ -129,13 +129,13 @@ https://github.com/iLx11/info-card-app.git
 
 确保放在根目录，然后访问此 json 文件的链接，复制下来，类似：
 ```bash
-https://lxw-resume.rth1.xyz/aaa.json
+https://info-card.rth1.xyz/aaa.json
 ```
 
 然后最后的链接组合起来就是：
 
 ```bash
-https://lxw-resume.rth1.xyz/?i=https://lxw-resume.rth1.xyz/aaa.json
+https://info-card.rth1.xyz/?i=https://info-card.rth1.xyz/aaa.json
 ```
 
 然后把这个链接写入到 NFC 中，最后手机开启 NFC 读取后跳转到网站就可以啦
