@@ -144,19 +144,16 @@ https://info-card.rth1.xyz/?i=https://info-card.rth1.xyz/aaa.json
 
 如果链接太长，可以通过下面几个网站来缩短链接，再写入到 NFC 中，所以不用担心 NFC 存储的字节不够用了：
 
-```js
 - [縮短網址 | PicSee 免登入．永久有效．追蹤成效](https://picsee.io/)
 - [缩我短链接-永久免费生成-老牌网址缩短工具-连通性好](https://suowo.cn/)
 - [永久免費縮短網址絕無廣告-ssur](https://ssur.cc/)
 - [免登入短網址生成器 - 立即縮短您的連結 | Url-Insight](https://www.url-ins.com/shorten/)
 - [摩尔活码 - 微信活码/门店活码/城市活码/永久活码生成制作工具！](https://molelink.cn/hm)
-```
 
 如果需要获取头像的链接，可以借助图床网站，上传照片后就会获得一个链接可以填写在数据中进行显示,
 
 可以试一下看哪个能用：
 
-```js
 - [图床](https://sm.ms/)
 - [FGHRSH 私家图床 - FGHRSH Image Hosting](https://img.fghrsh.net/)
 - [牛图网 - 免费图片空间,图片上传,免费传图,免费上传图片,免费图片存储,免费外链,免费空间,PNG上传,GIF上传,JPEG上传,最好的图片上传站](https://niupic.com/)
@@ -179,5 +176,4 @@ https://info-card.rth1.xyz/?i=https://info-card.rth1.xyz/aaa.json
 - [老王图床 - 免费图片上传, 专业图片外链, 免费公共图床, 老王图床](https://img.gejiba.com/?utm_source=iplaysoft.com&hmsr=iplaysoft.com)
 - [Imgur_ The magic of the Internet](https://imgur.com/?utm_source=iplaysoft.com&hmsr=iplaysoft.com)
 - [ImgURL免费图床](https://imgurl.org/)
-```
 
