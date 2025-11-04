@@ -1,3 +1,13 @@
+### 配置根据窗口宽度调整 item 宽度和数量
+
+```css
+grid-template-columns: repeat(auto-fill, minmax(60px, 80px));
+gap: clamp(8px, 0.7vw, var(--fixed-nav-content-gap));
+padding: 8px;
+// 水平垂直居中
+place-content: center;
+```
+
 ### 指定网格线名称
 
 可以使用方括号，指定每一根网格线的名字，方便以后的引用
@@ -87,7 +97,7 @@ place-content: <align-content> <justify-content>
 
 - `grid-column-start`属性：左边框所在的垂直网格线
 - `grid-column-end`属性：右边框所在的垂直网格线
-- `grid-row-start`属性：上边框所在的水平网格线
+- xxxxxxxxxx ​json
 - `grid-row-end`属性：下边框所在的水平网格线
 
 除了指定为第几个网格线，还可以指定为网格线的名字
