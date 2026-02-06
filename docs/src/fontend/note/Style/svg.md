@@ -5,6 +5,11 @@
 ```bash
 npm install vite-plugin-svg-icons -D
 npm install fast-glob -D
+
+#or 
+
+pnpm install vite-plugin-svg-icons -D
+pnpm install fast-glob -D
 ```
 
 在 `vite.config.ts`  中配置
@@ -13,16 +18,28 @@ npm install fast-glob -D
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons' // [!code highlight]
 import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    createSvgIconsPlugin({  // [!code highlight:4]
+    createSvgIconsPlugin({  // [!code highlight:16]
       iconDirs: [path.resolve(path.resolve(__dirname, 'src'), 'assets/icons')],
       symbolId: 'icon-[dir]-[name]',
+      // 用svgo自动移除 fill/stroke 属性，从根源清除固定颜色
+      svgoOptions: {
+        plugins: [
+          {
+            name: 'removeAttrs',
+            params: {
+              // 移除所有fill和stroke属性
+              attrs: ['fill', 'stroke'],
+            },
+          },
+        ],
+      },
     }),
   ],
   css: {
@@ -47,19 +64,18 @@ export default defineConfig({
 [path.resolve(path.resolve(__dirname, 'src'), 'assets/icons')]
 ```
 
-接下来创建一个专门显示 svg 的组件：
+接下来  `./components` 创建一个专门显示 svg 的组件 `SvgIcon.vue` ，且 **仅作用于组件内**，不会污染全局 SVG：
 
 ```vue
 <template>
   <svg
     aria-hidden="true"
     class="svg-icon"
-    :style="'width:' + size + ';height:' + size"
-    :color="color"
+    :style="{ width: size, height: size, color: color }"
   >
     <use
       :xlink:href="symbolId"
-      :color="color"
+      :style="{ width: size, height: size, color: color }"
     />
   </svg>
 </template>
@@ -89,7 +105,7 @@ const props = defineProps({
 const symbolId = computed(() => `#${props.prefix}-${props.iconClass}`)
 </script>
 
-<style>
+<style scoped>
 .svg-icon {
   display: inline-block;
   width: 2em;
@@ -98,10 +114,17 @@ const symbolId = computed(() => `#${props.prefix}-${props.iconClass}`)
   vertical-align: -0.15em;
   outline: none;
   fill: currentColor;
+  color: inherit;
 }
 
-path {
-  fill: currentColor;
+:deep(svg *),
+:deep(path),
+:deep(g),
+:deep(circle),
+:deep(rect) {
+  fill: currentColor !important;
+  /* 可选：如果SVG有描边，也让stroke继承颜色，按需开启 */
+  /* stroke: currentColor !important; */
 }
 </style>
 ```
@@ -109,11 +132,11 @@ path {
 之后在 `main.ts` 中添加
 
 ```ts
-import "virtual:svg-icons-register";
-import SvgIcon from './components/SvgIcon/Index.vue'; 
+import "virtual:svg-icons-register"; // [!code highlight:2]
+import SvgIcon from './components/SvgIcon.vue'; 
 
 const app = createApp(App);
-app.component('svg-icon', SvgIcon);
+app.component('svg-icon', SvgIcon); // [!code highlight]
 ```
 
 如果有标红报错，则需要添加类型声明
