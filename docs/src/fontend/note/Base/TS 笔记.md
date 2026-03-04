@@ -78,7 +78,36 @@ node helloworld.js
     终端 > 运行任务 > 监视tsconfig.json
 ```
 
+### vscode  开启类型提示
 
+首先，通过 Ctrl(Command) + Shift + P 打开命令面板，找到「打开工作区设置」这一项。
+
+在打开的设置中输入 typescript，筛选出所有 TypeScript 有关的配置，点击左侧的"TypeScript"，这里才是官方内置的配置。
+
+补全搜索词，使用“typescript inlay hints”：
+
+推荐开启的配置项主要是这几个：
+
+- Function Like Return Types，显示推导得到的函数返回值类型；
+- Parameter Names，显示函数入参的名称；
+- Parameter Types，显示函数入参的类型；
+- Variable Types，显示变量的类型。
+
+## 代码测试
+
+TypeScript 官方提供的 [TypeScript Playground](https://link.juejin.cn/?target=https%3A%2F%2Fwww.typescriptlang.org%2Fplay)
+
+编译行为会随着你的代码变更自动执行，无需手动操作，但是如果你希望执行编译后的 JS 代码，就需要通过 Command(Ctrl) + Enter 的方式
+
+### 代码编译测试
+
+来自社区的 npm 包 esno，简化 -> js -> node 步骤：
+
+```bash
+$ npx esno index.ts
+
+Hello World!
+```
 
 
 
@@ -284,7 +313,7 @@ const mySearch: SearchFunc = function (source: string, sub: string): boolean {
 }
 ```
 
-
+ 
 
 ### 类类型
 
@@ -480,10 +509,6 @@ function add(x: string | number, y: string | number): string | number {
 # 泛型
 
 指在定义函数、接口或类的时候，不预先指定具体的类型，而在使用的时候再指定具体类型的一种特性
-
-
-
-
 
 ### 多个泛型参数的函数
 

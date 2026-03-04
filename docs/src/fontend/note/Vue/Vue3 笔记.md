@@ -772,6 +772,56 @@ dynamicComponent.value = defineAsyncComponent(
 />
 ```
 
+### 包装动态加载组件
+
+```ts
+********************************************************************************
+ * @brief: 封装异步组件创建函数（复用配置，避免重复代码）
+ * @param {() => Promise<{ default: any }>} loader 组件加载函数
+ * @return {*} 配置好的异步组件
+ ********************************************************************************/
+const createAsyncComponent = (loader: () => Promise<{ default: any }>) => {
+  return defineAsyncComponent({
+    // 核心加载函数
+    loader,
+    // 加载中显示的组件
+    loadingComponent: LoadingComp,
+    // 加载失败显示的组件
+    // errorComponent: ErrorComp,
+    // 延迟200ms显示加载态（避免网络快时闪屏）
+    delay: 200,
+    // 超时时间（10秒加载失败则显示错误组件）
+    timeout: 10000,
+    onError(error, retry, fail, attempts) {
+      // 加载失败重试逻辑（最多重试3次）
+      if (attempts < 3) {
+        retry()
+      } else {
+        fail()
+      }
+    },
+  })
+}
+const routeData = {
+    path: '/',
+    name: 'Home',
+    // 根组件改为异步加载
+    component: createAsyncComponent(() => import('@/components/MainComp.vue')),
+    redirect: '/rgb-config',
+    children: [
+      {
+        path: '/trigger-config',
+        name: 'TriggerConfig',
+        component: createAsyncComponent(
+          () => import('@/views/triggerConfig/TriggerConfig.vue'),
+        ),
+      },
+    ]
+}
+            
+            
+```
+
 
 
 # 路由传值
