@@ -46,8 +46,6 @@ yarn global add typescript
 tsc V 
 ```
 
-
-
 ### 运行TS
 
 在命令行上，运行 TypeScript 编译器：
@@ -63,8 +61,6 @@ tsc helloworld.ts
 ```bash
 node helloworld.js
 ```
-
-
 
 ### vscode自动编译
 
@@ -111,9 +107,66 @@ Hello World!
 
 
 
+# 配置
+
+如果我们的 target 指定了一个版本，比如 es5，但你又希望使用 es6 中才有的 Promise 语法，此时就需要在 lib 配置项中新增 'es2015.promise'，来告诉 TypeScript 你的目标环境中需要启用这个能力，否则就会得到一个错误：
+
+```typescript
+const handler = async () => {};
+```
+
+> *异步函数或方法必须返回 “Promise”。请确保具有对 “Promise” 的声明或在 “--lib” 选项中包含了 “ES2015”。ts(2697)*
+
+```ts
+{
+  "compilerOptions": {
+    "lib": ["ES2015"],
+    "target": "ES5"
+  }
+}
+```
+
+
+
+## 输入控制
+
+使用 include 和 exclude 这两个配置项来确定要包括哪些代码文件，再通过 outDir 选项配置你要存放输出文件的文件夹
+
+首先通过 include ，我们指定了要包括 src 目录下所有的文件，再通过 exclude 选项，剔除掉已经被 include 进去的文件，包括 `src/generated` 文件夹，以及所有 `.spec.ts` 后缀的测试用例文件。然后在完成编译后，就可以在 dist 目录下找到编译产物了。
+
+```json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "dist",
+    "strict": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/generated",
+    "**/*.spec.ts"
+  ]
+}
+```
+
+假设我们的项目中被三方依赖安装了大量的 @types 文件，导致类型加载缓慢或者冲突，此时就可以使用 types 配置项来显式指定你需要加载的类型定义：
+
+会加载 `@types/node`，`@types/jest`，`@types/react` 这几个类型定义包
+
+```json
+{
+  "compilerOptions": {
+    "types": ["node", "jest", "react"],
+  }
+}
+```
+
+
+
 # TS基础语法
-
-
 
 ## 一、类型注解
 
@@ -156,6 +209,12 @@ tArray = ["str", 123];
 tArray = [123, "str"];
 ```
 
+TypeScript 4.0 中，有了具名元组（[Labeled Tuple Elements](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FMicrosoft%2FTypeScript%2Fissues%2F28259)）的支持，使得我们可以为元组中的元素打上类似属性的标记：
+
+```ts
+const arr7: [name: string, age: number, male?: boolean] = ['linbudu', 599, true];
+```
+
 
 
 ### 枚举
@@ -173,8 +232,6 @@ enum Colorful {
 let meColor: Colorful = Colorful.blue;
 ```
 
-
-
 ### any
 
 有时候，我们会想要为那些在编程阶段还不清楚类型的变量指定一个类型。 这些值可能来自于动态的内容，比如来自用户输入或第三方代码库。 这种情况下，我们不希望类型检查器对这些值进行检查而是直接让它们通过编译阶段的检查。 那么我们可以使用 `any` 类型来标记这些变量：
@@ -188,19 +245,21 @@ notdecide = true;  // ok
 let array: any[] = ['123', 123, true];
 ```
 
-
-
 ### void
 
 某种程度上来说，`void` 类型像是与 `any` 类型相反，它`表示没有任何类型`。 当一个函数没有返回值时，你通常会见到其返回值类型是 `void`：
-
-
 
 ### object
 
 `object` 表示非原始类型，也就是除 `number`，`string`，`boolean`之外的类型。
 
 使用 `object` 类型，就可以更好的表示像 `Object.create` 这样的 `API`
+
+
+
+和 Object 类似的还有 Boolean、Number、String、Symbol，这几个**装箱类型（Boxed Types）** 同样包含了一些超出预期的类型。以 String 为例，它同样包括 undefined、null、void，以及代表的 **拆箱类型（Unboxed Types）** string，但并不包括其他装箱类型对应的拆箱类型，如 boolean 与 基本对象类型
+
+**在任何情况下，都不应该使用这些装箱类型。**
 
 
 
@@ -216,7 +275,7 @@ function func(x: number | string ): string {
 }
 ```
 
-
+## 断言
 
 ### 类型断言
 
@@ -243,7 +302,33 @@ function getLength(x: number | string) {
 
 
 
-### 类型推断
+### 非空断言
+
+非空断言其实是类型断言的简化，它使用 `!` 语法，即 `obj!.func()!.prop` 的形式标记前面的一个声明一定是非空的（实际上就是剔除了 null 和 undefined 类型）
+
+```ts
+foo.func!().prop!.toFixed();
+```
+
+类似于可选链：
+
+```typescript
+foo.func?.().prop?.toFixed();
+```
+
+但不同的是，非空断言的运行时仍然会保持调用链，因此在运行时可能会报错。而可选链则会在某一个部分收到 undefined 或 null 时直接短路掉，不会再发生后面的调用。
+
+为什么说非空断言是类型断言的简写？因为上面的非空断言实际上等价于以下的类型断言操作：
+
+```typescript
+((foo.func as () => ({
+  prop?: number;
+}))().prop as number).toFixed();
+```
+
+
+
+## 类型推断
 
 类型推断: TS会在没有明确的指定类型的时候推测出一个类型
 
@@ -275,9 +360,9 @@ TypeScript 的核心原则之一是对值所具有的结构进行类型检查。
 
 ```ts
 interface Person {
-    // 必须属性
     // 只读属性
     readonly id: number,
+    // 必须属性
     name: string, 
     sex: string,
     // 可选属性
@@ -339,13 +424,15 @@ class Clock implements Alarm, Light {
 }
 ```
 
-
-
 ### 接口继承接口
 
 ```ts
 interface lightAlarm extends Alarm, Ligth {}
 ```
+
+### type 与 interface
+
+推荐 interface 用来描述**对象、类的结构**，而类型别名用来**将一个函数签名、一组联合类型、一个工具类型等等抽离成一个完整独立的类型**。但大部分场景下接口结构都可以被类型别名所取代，因此，只要你觉得统一使用类型别名让你觉得更整齐，也没什么问题。
 
 
 
@@ -461,8 +548,6 @@ console.log( Person.personalId )
 
 ## 函数
 
-
-
 ### 可选参数和默认参数
 
 TypeScript 里的每个函数参数都是必须的。 这不是指不能传递 `null` 或 `undefined` 作为参数，而是说编译器检查用户是否为每个参数都传入了值。编译器还会假设只有这些参数会被传递进函数。 简短地说，传递给一个函数的参数个数必须与函数期望的参数个数一致。
@@ -479,8 +564,6 @@ function getName(firstName: string='L', lastName?: string): string {}
 ```ts
 function info(x: string, ...args: string[]): string {}
 ```
-
-
 
 ### 函数重载
 
@@ -502,11 +585,27 @@ function add(x: string | number, y: string | number): string | number {
 }
 ```
 
+### 可选参数与 rest 参数
+
+对象类型中我们使用 `?` 描述一个可选属性一样，在函数类型中我们也使用 `?` 描述一个可选参数：
+
+```ts
+// 在函数逻辑中注入可选参数默认值
+function foo1(name: string, age?: number): number {
+  const inputAge = age ?? 18;
+  return name.length + inputAge
+}
+
+// 直接为可选参数声明默认值
+function foo2(name: string, age: number = 18): number {
+  const inputAge = age;
+  return name.length + inputAge
+}
+```
 
 
 
-
-# 泛型
+## 泛型
 
 指在定义函数、接口或类的时候，不预先指定具体的类型，而在使用的时候再指定具体类型的一种特性
 
@@ -523,8 +622,6 @@ const result = swap<string, number>('abc', 123)
 console.log(result[0].length, result[1].toFixed())
 ```
 
-
-
 ## 泛型接口
 
 在定义接口时, 为接口中的属性或方法定义泛型类型
@@ -532,13 +629,272 @@ console.log(result[0].length, result[1].toFixed())
 
 
 
+## 类型接口
+
+TypeScript 中，需要专门的 .d.ts 文件来进行书写，这里的 d 即是 declaration 声明之意
+
+在从 TS 编译到 JS 的过程中，类型并不是真的全部消失了，而是被放到了专门的类型声明文件里，编译一个 TS 文件时，它不仅仅会产生 JS 文件，还会产生一个 .d.ts 文件
+
+## 字面量类型与联合类型
+
+### 字面量类型
+
+字面量类型主要包括**字符串字面量类型**、**数字字面量类型**、**布尔字面量类型**和**对象字面量类型**，它们可以直接作为类型标注：
+
+```typescript
+const str: "linbudu" = "linbudu";
+const num: 599 = 599;
+const bool: true = true;
+```
+
+单独使用字面量类型比较少见，因为单个字面量类型并没有什么实际意义。它通常和联合类型（即这里的 `|`）一起使用，表达一组字面量类型：
+
+```ts
+interface Tmp {
+  bool: true | false;
+  num: 1 | 2 | 3;
+  str: "lin" | "bu" | "du"
+}
+```
+
+### 联合类型
+
+而联合类型你可以理解为，它代表了**一组类型的可用集合**，只要最终赋值的类型属于联合类型的成员之一，就可以认为符合这个联合类型。联合类型对其成员并没有任何限制，除了上面这样对同一类型字面量的联合，我们还可以将各种类型混合到一起：
+
+```ts
+interface Tmp {
+  mixed: true | string | 599 | {} | (() => {}) | (1 | 2)
+}
+```
+
+- 对于联合类型中的函数类型，需要使用括号`()`包裹起来
+- 函数类型并不存在字面量类型，因此这里的 `(() => {})` 就是一个合法的函数类型
+- 你可以在联合类型中进一步嵌套联合类型，但这些嵌套的联合类型最终都会被展平到第一级中
+
+联合类型的常用场景之一是通过多个对象类型的联合，来实现手动的互斥属性，即这一属性如果有字段1，那就没有字段2：
+
+```ts
+interface Tmp {
+  user:
+    | {
+        vip: true;
+        expires: string;
+      }
+    | {
+        vip: false;
+        promotion: string;
+      };
+}
+
+declare var tmp: Tmp;
+
+if (tmp.user.vip) {
+  console.log(tmp.user.expires);
+} 
+```
 
 
 
+# 内置方法
 
+## Partial
 
+它接收一个对象类型，并将这个对象类型的所有属性都标记为可选，这样我们就不需要一个个将它们标记为可选属性了。 
 
+```ts
+type User = {
+  name: string;
+  age: number;
+  email: string;
+};
 
+type PartialUser = Partial<User>;
 
+// 可以不实现全部的属性
+const partialUser: PartialUser = {
+  name: 'John Doe',
+  age: 30
+};
+```
 
+Required, readonly ，使用方式和 Partial 完全一致
 
+## 索引签名类型
+
+### Record
+
+```ts
+type UserProps = 'name' | 'job' | 'email';
+
+// 等价于你一个个实现这些属性了
+type User = Record<UserProps, string>;
+
+const user: User = {
+  name: 'John Doe',
+  job: 'fe-developer',
+  email: 'john.doe@example.com'
+};
+```
+
+声明属性名还未确定的接口类型
+
+```ts
+type User = Record<string, string>;
+
+const user: User = {
+  name: 'John Doe',
+  job: 'fe-developer',
+  email: 'john.doe@example.com',
+  bio: 'Make more interesting things!',
+  type: 'vip',
+  // ...
+};
+```
+
+### Pick 
+
+Pick 类型接收一个对象类型，以及一个字面量类型组成的联合类型，这个联合类型只能是由对象类型的属性名组成的。它会对这个对象类型进行裁剪，只保留你传入的属性名组成的部分：
+
+```typescript
+type User = {
+  name: string;
+  age: number;
+  email: string;
+  phone: string;
+};
+
+// 只提取其中的 name 与 age 信息
+type UserBasicInfo = Pick<User, 'name' | 'age'>;
+
+const user: User = {
+  name: 'John Doe',
+  age: 30,
+  email: 'john.doe@example.com',
+  phone: '1234567890'
+};
+
+const userBasicInfo: UserBasicInfo = {
+  name: 'John Doe',
+  age: 30
+};
+```
+
+而 Omit 类型就是 Pick 类型的另一面，它的入参和 Pick 类型一致，但效果却是相反的——它会移除传入的属性名的部分，只保留剩下的部分作为新的对象类型：
+
+```typescript
+type User = {
+  name: string;
+  age: number;
+  email: string;
+  phone: string;
+};
+
+// 只移除 phone 属性
+type UserWithoutPhone = Omit<User, 'phone'>;
+
+const user: User = {
+  name: 'John Doe',
+  age: 30,
+  email: 'john.doe@example.com',
+  phone: '1234567890'
+};
+
+const userWithoutPhone: UserWithoutPhone = {
+  name: 'John Doe',
+  age: 30,
+  email: 'john.doe@example.com'
+};
+```
+
+### Exclude
+
+从一个类型中移除另一个类型中也存在的部分：
+
+```typescript
+type UserProps = 'name' | 'age' | 'email' | 'phone' | 'address';
+type RequiredUserProps = 'name' | 'email';
+
+// OptionalUserProps = UserProps - RequiredUserProps
+type OptionalUserProps = Exclude<UserProps, RequiredUserProps>;
+
+const optionalUserProps: OptionalUserProps = 'age'; // 'age' | 'phone' | 'address';
+```
+
+而 Extract 则用于提取另一个类型中也存在的部分，即交集：
+
+```typescript
+type UserProps = 'name' | 'age' | 'email' | 'phone' | 'address';
+type RequiredUserProps = 'name' | 'email';
+
+type RequiredUserPropsOnly = Extract<UserProps, RequiredUserProps>;
+
+const requiredUserPropsOnly: RequiredUserPropsOnly = 'name'; // 'name' | 'email';
+```
+
+## 函数类型
+
+###  Parameters 和 ReturnType 
+
+这两个类型来提取函数的参数类型与返回值类型：
+
+``` ts
+type Add = (x: number, y: number) => number;
+
+type AddParams = Parameters<Add>; // [number, number] 类型
+type AddResult = ReturnType<Add>; // number 类型
+
+const addParams: AddParams = [1, 2];
+const addResult: AddResult = 3;
+```
+
+只有一个函数，而并没有这个函数类型，此时可以使用 TypeScript 提供的类型查询操作符，即 typeof（和 JavaScript 不同），来获得一个函数的结构化类型：
+
+```ts
+const addHandler = (x: number, y: number) => x + y;
+
+type Add = typeof addHandler; // (x: number, y: number) => number;
+
+type AddParams = Parameters<Add>; // [number, number] 类型
+type AddResult = ReturnType<Add>; // number 类型
+```
+
+### Promise<string> 读取 string
+
+```ts
+const promise = new Promise<string>((resolve) => {
+  setTimeout(() => {
+    resolve("Hello, World!");
+  }, 1000);
+});
+
+type PromiseInput = Promise<string>;
+type AwaitedPromiseInput = Awaited<PromiseInput>; // string
+```
+
+可以直接嵌套在 ReturnType 内部使用：
+
+```ts
+// 定义一个函数，该函数返回一个 Promise 对象
+async function getPromise() {
+  return new Promise<string>((resolve) => {
+    setTimeout(() => {
+      resolve("Hello, World!");
+    }, 1000);
+  });
+}
+
+type Result = Awaited<ReturnType<typeof getPromise>>; // string 类型
+
+```
+
+## 模板字符串类型
+
+```ts
+type Brand = 'iphone' | 'xiaomi' | 'honor';
+type Memory = '16G' | '64G';
+type ItemType = 'official' | 'second-hand';
+
+type SKU = `${Brand}-${Memory}-${ItemType}`;
+```
+
+可以得到了一个由所有联合类型的可能分支进行排列组合，共 3x2x2 = 12 个类型组成的联合类型

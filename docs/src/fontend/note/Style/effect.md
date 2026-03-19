@@ -1,4 +1,4 @@
-### 使用 CSS @property 实现背景色渐变动画
+## 使用 CSS @property 实现背景色渐变动画
 
 ```css
  @property --colorA {
@@ -51,7 +51,7 @@ div {
 
 
 
-### 实现渐隐
+## 实现渐隐
 
 ```css
 mask: linear-gradient(90deg, #000 70%, transparent);
@@ -91,12 +91,13 @@ mask: linear-gradient(90deg, #000 70%, transparent);
 }
 ```
 
-### 多个元素根据鼠标 3D 移动
+## 多个元素根据鼠标 3D 移动
 
 `requestAnimationFrame` 用来优化代码
 
 ```js
 const MULTIPLE = 6
+// 多个元素的数组
 const eleArr = ['.div5', '.div6', '.div7', '.div8']
 const transRotate = (x, y, i) => {
   const element = document.querySelector(eleArr[i])
@@ -108,7 +109,7 @@ const transRotate = (x, y, i) => {
     'rotateX(' + calcX + 'deg) ' + 'rotateY(' + calcY + 'deg) '
 }
 
-const mouseInA = (e, i) => {
+const mouseMoveA = (e, i) => {
   window.requestAnimationFrame(function () {
     transRotate(e.clientX, e.clientY, i)
   })
@@ -134,6 +135,119 @@ transform: translateZ(xxxx);
 // 可以按情况调整一下中心点
 transform-origin: left top;
 ```
+
+#### 组件上添加
+
+```html
+<div
+    class="div6"
+    @mousemove="mouseMoveA($event, 0)"
+    @mouseleave="mouseOutA(0)"
+>
+</div>
+```
+
+### 优化版本：
+
+优化处理，减少资源，添加缓动，判断动画循环，并调整 3D 视角
+
+```ts
+// 控制最大旋转角度
+const MAX_ROTATION = 8
+// 控制追赶速，缓动效果
+const ROTATION_EASING = 0.14
+// 动画帧 ID
+let animationFrameId = 0
+const currentRotation = {
+  x: 0,
+  y: 0,
+}
+const targetRotation = {
+  x: 0,
+  y: 0,
+}
+
+/********************************************************************************
+ * @brief: 渲染图片变换
+ * @return {*}
+ ********************************************************************************/
+const renderImageTransform = () => {
+  const imageElement = mainImageRef.value
+  if (!imageElement) {
+    animationFrameId = 0
+    return
+  }
+
+  currentRotation.x += (targetRotation.x - currentRotation.x) * ROTATION_EASING
+  currentRotation.y += (targetRotation.y - currentRotation.y) * ROTATION_EASING
+
+  imageElement.style.transform = `perspective(1400px) scale(1.02) rotateX(${currentRotation.x}deg) rotateY(${currentRotation.y}deg)`
+
+  const needsNextFrame =
+    Math.abs(targetRotation.x - currentRotation.x) > 0.01 ||
+    Math.abs(targetRotation.y - currentRotation.y) > 0.01
+
+  if (needsNextFrame) {
+    animationFrameId = window.requestAnimationFrame(renderImageTransform)
+  } else {
+    animationFrameId = 0
+  }
+}
+
+/********************************************************************************
+ * @brief: 防止重复开多个动画循环
+ * @return {*}
+ ********************************************************************************/
+const ensureAnimationFrame = () => {
+  if (!animationFrameId) {
+    animationFrameId = window.requestAnimationFrame(renderImageTransform)
+  }
+}
+
+/********************************************************************************
+ * @brief: 鼠标移动事件
+ * @param {*} e
+ * @return {*}
+ ********************************************************************************/
+const mouseMoveA = e => {
+  const panelRect = e.currentTarget.getBoundingClientRect()
+  const offsetX = (e.clientX - panelRect.left) / panelRect.width - 0.5
+  const offsetY = (e.clientY - panelRect.top) / panelRect.height - 0.5
+
+  targetRotation.x = offsetY * -MAX_ROTATION * 2
+  targetRotation.y = offsetX * MAX_ROTATION * 2
+  ensureAnimationFrame()
+}
+
+/********************************************************************************
+ * @brief: 鼠标离开事件，重置旋转
+ * @return {*}
+ ********************************************************************************/
+const mouseOutA = () => {
+  targetRotation.x = 0
+  targetRotation.y = 0
+  ensureAnimationFrame()
+}
+
+onBeforeUnmount(() => {
+  if (animationFrameId) {
+    window.cancelAnimationFrame(animationFrameId)
+  }
+})
+```
+
+元素添加 CSS
+
+```css
+transform-style: preserve-3d;
+transform: perspective(1400px) scale(1.02) rotateX(0deg) rotateY(0deg);
+// 提前告诉浏览器这个元素会频繁改 transform，让浏览器更容易做图层优化
+will-change: transform;
+// 避免 3D 旋转时出现一些背面闪烁或边缘抖动
+backface-visibility: hidden;
+```
+
+
 
 ### 元素挖圆孔
 
@@ -255,3 +369,8 @@ $time-step: $time/$max;
 ```
 
 ## 
+
+### 多色框思路
+
+使用线性渐变 + blur + 多 DOM 叠加
+
