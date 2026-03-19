@@ -249,7 +249,7 @@ backface-visibility: hidden;
 
 
 
-### 元素挖圆孔
+## 元素挖圆孔
 
 ```css
 background-image: radial-gradient(
@@ -275,7 +275,7 @@ background-image: radial-gradient(
 
 
 
-### 内凹平滑圆角
+## 内凹平滑圆角
 
 ```css
 .box {
@@ -306,7 +306,7 @@ background-image: radial-gradient(
 }
 ```
 
-### 字体边框颜色动画
+## 字体边框颜色动画
 
 ```vue
 <template>
@@ -370,7 +370,7 @@ $time-step: $time/$max;
 
 ## 
 
-### 多色框思路
+## 多色框思路
 
-使用线性渐变 + blur + 多 DOM 叠加
+使用线性渐变/角向渐变 + blur + 多 DOM 叠加
 

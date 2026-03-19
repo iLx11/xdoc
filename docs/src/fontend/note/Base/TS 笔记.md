@@ -858,7 +858,7 @@ type AddParams = Parameters<Add>; // [number, number] 类型
 type AddResult = ReturnType<Add>; // number 类型
 ```
 
-### Promise<string> 读取 string
+### Promise 读取 string
 
 ```ts
 const promise = new Promise<string>((resolve) => {
