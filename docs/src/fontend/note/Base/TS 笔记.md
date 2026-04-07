@@ -215,6 +215,17 @@ TypeScript 4.0 中，有了具名元组（[Labeled Tuple Elements](https://link.
 const arr7: [name: string, age: number, male?: boolean] = ['linbudu', 599, true];
 ```
 
+### 类型查询操作符 typeof
+
+```ts
+const str = "xxx";
+
+const obj = { name: "xxx" };
+
+type Str = typeof str; // "xxx"
+type Obj = typeof obj; // { name: xxx; }
+```
+
 
 
 ### 枚举
@@ -692,6 +703,47 @@ if (tmp.user.vip) {
   console.log(tmp.user.expires);
 } 
 ```
+
+# 索引类型
+
+## 索引签名类型
+
+索引签名类型主要指在接口或类型别名中，通过以下语法来**快速声明一个键值类型一致的类型结构**：
+
+```ts
+interface AllStringTypes {
+  [key: string]: string;
+}
+
+type AllStringTypes = {
+  [key: string]: string;
+}
+```
+
+这时，即使你还没声明具体的属性，对于这些类型结构的属性访问也将全部被视为 string 类型：
+
+```ts
+type PropType1 = AllStringTypes['xxx']; // string
+
+const foo: AllStringTypes = {
+  "xxxx": "xxxx"
+}
+```
+
+### 索引类型查询
+
+```ts
+interface Foo {
+  xxx: 1,
+  123: 2
+}
+
+type FooKeys = keyof Foo; // "xxx" | 123
+```
+
+
+
+
 
 
 

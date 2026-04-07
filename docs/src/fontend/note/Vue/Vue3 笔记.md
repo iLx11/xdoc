@@ -1134,3 +1134,38 @@ function ref(target) {
   return result
 }
 ```
+
+# 问题与解决
+
+## TS 报错 Cannot find module '@XXXX/XXX '
+
+TypeScript 无法把 @/... 映射到 src/...
+
+`tsconfig.json` 中
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+```
+
+`tsconfig.app.json`  中
+
+```json
+ "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+ }
+```
+
+然后重启一下 TypeScript Server
+
