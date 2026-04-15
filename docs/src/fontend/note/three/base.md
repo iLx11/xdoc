@@ -1,3 +1,9 @@
+## 安装依赖
+
+```bash
+pnpm install three @types/three
+```
+
 ## 常用接口
 
 ## **创建场景 (**`THREE.Scene`**)**
@@ -32,12 +38,39 @@ scene.background = new THREE.Color(0x87ceeb); // 设置背景颜色
 ```javascript
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5; // 将相机稍微远离中心
+
+// 创建视锥体
+const cameraHelper = new THREE.CameraHelper(camera2);
+scene.add(cameraHelper);
 ```
 
 - `fov`：表示视场，就是能够看到的角度范围，人的眼睛大约能够看到 `180度` 的视场，视角大小设置要根据具体应用，一般游戏会设置 `60~90` 度，默认值 `45`。
 - `aspect`：表示渲染窗口的长宽比，如果一个网页上只有一个全屏的 `canvas` 画布且画布上只有一个窗口，那么 `aspect` 的值就是网页窗口客户区的宽高比 `window.innerWidth/window.innerHeight`。
 - `near`：属性表示的是从距离相机多远的位置开始渲染，一般情况会设置一个很小的值。 默认值 `0.1`。
 - `far`：属性表示的是距离相机多远的位置截止渲染，如果设置的值偏小，会有部分场景看不到，默认值 `1000`。
+
+### 在控件中调试
+
+```js
+const camera = new THREE.PerspectiveCamera(20, 16 / 9, 100, 300);
+let cameraHelper = new THREE.CameraHelper(camera);
+scene.add(cameraHelper);
+
+const gui = new GUI();
+function onChange() {
+    camera.updateProjectionMatrix();
+    cameraHelper.update();
+}
+gui.add(camera, 'fov', [30, 60, 10]).onChange(onChange);
+gui.add(camera2, 'aspect', {
+    '16/9': 16/9,
+    '4/3': 4/3
+}).onChange(onChange);
+gui.add(camera2, 'near', 0, 300).onChange(onChange);
+gui.add(camera2, 'far', 300, 800).onChange(onChange);
+```
+
+
 
 ## **渲染器 (**`THREE.WebGLRenderer`**)**
 
@@ -170,6 +203,10 @@ material.map = texture;
 - 需要在渲染循环中更新。
 
 ```javascript
+import {
+    OrbitControls
+} from 'three/addons/controls/OrbitControls.js';
+
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; // 阻尼效果
 ```
@@ -261,6 +298,13 @@ const loader = new THREE.OBJLoader( manager );
 loader.load('file.obj', function (object) {});
 ```
 
+## 坐标轴
+
+```js
+const axesHelper = new THREE.AxesHelper(200);
+scene.add(axesHelper);
+```
+
 ## 补间动画TWEEN
 
 `Tween.js` 是附加在 `Three.js` 库中的一个扩充动画库，它可以平滑的修改元素的属性值，使一个对象在一定时间内从一个状态缓动变化到另外一个状态，配合动画函数实现丝滑的动画效果`TWEEN.js` 本质就是一系列缓动函数算法，结合`Canvas`、`Three.js` 很简单就能实现很多动画效果。
@@ -335,5 +379,55 @@ loader.load('/models/statue.glb', function (gltf) {
 });
 ```
 
+## GUI 控件
 
+```js
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+const gui = new GUI();
+// 分组
+const meshFolder = gui.addFolder('立方体');
+meshFolder.addColor(mesh.material, 'color');
+meshFolder.add(mesh.position, 'x').step(10);
+meshFolder.add(mesh.position, 'y').step(10);
+meshFolder.add(mesh.position, 'z').step(10);
+
+const lightFolder = gui.addFolder('灯光');
+lightFolder.add(pointLight.position, 'x').step(10);
+lightFolder.add(pointLight.position, 'y').step(10);
+lightFolder.add(pointLight.position, 'z').step(10);
+lightFolder.add(pointLight, 'intensity').step(1000);
+```
+
+### 复杂控件
+
+```js
+const otherFolder = gui.addFolder('其他控件');
+
+const obj = {
+    aaa: 'xxx',
+    bbb: false,
+    ccc: 0,
+    ddd: 'xxx',
+    fff: 'xx',
+    logic: function () {
+      alert('执行一段逻辑!');
+    }
+};
+
+otherFolder.add(obj, 'aaa');
+otherFolder.add(obj, 'bbb');
+otherFolder.add(obj, 'ccc').min(-10).max(10).step(0.5);
+otherFolder.add(obj, 'ddd', [ '111', '222', '333' ] );
+otherFolder.add(obj, 'fff', { Aaa: 0, Bbb: 0.1, Ccc: 5 } );
+otherFolder.add(obj, 'logic');
+```
+
+### 绑定 onchange 事件
+
+```js
+otherFolder.add(obj, 'aaa').onChange((v) => {
+	console.info(v)
+})
+```
 
